@@ -33,7 +33,7 @@ public class GoogleLoginActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.i("Tag", "started program");
+        Log.i("Tag", "started Google Activity");
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)

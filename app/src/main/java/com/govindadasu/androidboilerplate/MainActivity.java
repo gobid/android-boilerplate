@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
+import android.content.pm.Signature;
 import android.view.View;
 import android.widget.TextView;
 
@@ -90,13 +90,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_main);
         mTextDetails = (TextView)findViewById(R.id.mTextDetails);
 
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.forge.simpleandroid",
+                    "com.govindadasu.androidboilerplate",
                     PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
@@ -108,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements
             mTextDetails.setText("Error");
         }
 
-        Log.i("Tag", "started program");
         SignInButton btn = (SignInButton)findViewById(R.id.sign_in_button);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -140,7 +140,6 @@ public class MainActivity extends AppCompatActivity implements
             startActivity(new Intent(this, GoogleLoginActivity.class));
         }
 
-        // ...
     }
 
 
