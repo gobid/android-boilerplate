@@ -44,26 +44,26 @@
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_weight="20"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal" />
 
 
     <Button
         android:id="@+id/btnSingIn"
         android:layout_width="100dp"
-        android:layout_weight="10"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:onClick="goToSignIn"
         android:padding="10dp"
         android:text="Sign In"
-        android:layout_gravity="right" />
+        android:layout_gravity="center_horizontal" />
 
     <Button
         android:id="@+id/btnSignUp"
         android:layout_width="100dp"
-        android:layout_weight="10"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_margin="4dp"
         android:onClick="goToRegistration"
-        android:text="Sign Up" />
+        android:text="Sign Up"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>
