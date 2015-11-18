@@ -3,22 +3,19 @@ package com.govindadasu.androidboilerplate;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
-
 import android.content.CursorLoader;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
-
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -30,6 +27,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -194,13 +192,14 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                             "&password=" + password;
             task.execute("https://forge.fwd.wf/djoser-auth/register/");
             try {
-                task.get(10000, TimeUnit.MILLISECONDS);
-                Intent intent = new Intent(getBaseContext(), Profile_View.class);
-                intent.putExtra(App.profileInfoText, task.final_output);
-                startActivity(intent);
+                task.get(15000, TimeUnit.MILLISECONDS);
+                Toast.makeText(getApplicationContext(), (String) "We got you registered. Please check your email for the activiation link",
+                        Toast.LENGTH_LONG).show();
             }
             catch (Exception e){
-                Log.e(App.getTag(), "!!!!Give feedback to user that couldn't register!!!!");
+                Log.e(App.getTag(), "error", e);
+                Toast.makeText(getApplicationContext(), (String) "Sorry we couldn't get you registered. Please check your credentials again",
+                        Toast.LENGTH_LONG).show();
             }
         }
     }

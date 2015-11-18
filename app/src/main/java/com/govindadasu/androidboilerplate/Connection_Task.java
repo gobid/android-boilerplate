@@ -18,6 +18,7 @@ import java.net.URLConnection;
 public class Connection_Task extends AsyncTask<String, Void, String> {
     public String parameters="";
     public String final_output = "nothing right now";
+    int responseCode = -1;
     @Override
     protected String doInBackground(String... urls) {
         String output = null;
@@ -62,9 +63,10 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
             writer.write(urlParameters);
             writer.flush();
 
-            if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+            if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK || httpConnection.getResponseCode() == HttpURLConnection.HTTP_CREATED || httpConnection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED) {
                 Log.e(App.getTag(), "HTTP_OK");
                 stream = httpConnection.getInputStream();
+                responseCode = httpConnection.getResponseCode();
             }
             else{
                 Log.e(App.getTag(), "couldn't connect code: " + httpConnection.getResponseCode());
