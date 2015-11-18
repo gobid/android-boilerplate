@@ -95,6 +95,10 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         mTextDetails = (TextView)findViewById(R.id.mTextDetails);
 
+        Connection_Task task = new Connection_Task();
+        task.parameters = "client_id=TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU&client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&grant_type=password&username=admin&password=admin";
+        task.execute("https://forge.fwd.wf/auth/token");
+
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
                     "com.govindadasu.androidboilerplate",
