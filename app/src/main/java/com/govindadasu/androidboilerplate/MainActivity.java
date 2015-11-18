@@ -1,7 +1,9 @@
 package com.govindadasu.androidboilerplate;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity implements
     private ProfileTracker mProfileTracker;
     private com.facebook.AccessToken accessToken;
     private  Activity mainActivity = this;
+
 
     private FacebookCallback<LoginResult>  mCallback = new FacebookCallback<LoginResult>() {
         @Override
@@ -99,15 +102,18 @@ public class MainActivity extends AppCompatActivity implements
         }
     };
     /* Request code used to invoke sign in user interactions. */
-    private static final int RC_SIGN_IN = 0;
+    private static final int RC_SIGN_IN = 9001;
 
     /* Client used to interact with Google APIs. */
     private GoogleApiClient mGoogleApiClient;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
+
+        attemptAutoLogin();
 
         setContentView(R.layout.activity_main);
         mTextDetails = (TextView)findViewById(R.id.mTextDetails);
@@ -139,6 +145,33 @@ public class MainActivity extends AppCompatActivity implements
 
     }
 
+    private void attemptAutoLogin() {
+        try {
+            SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            String access_token = getResources().getString(R.string.access_token);
+            Connection_Task task = new Connection_Task();
+            task.parameters =
+                    "grant_type=convert_token&" +
+                            "client_id=TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU&" +
+                            "client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&" +
+                            "refresh_token=" + access_token;
+            task.execute("https://forge.fwd.wf/auth/token");
+            task.get(10000, TimeUnit.MILLISECONDS);
+            Intent intent = new Intent(getBaseContext(), Profile_View.class);
+            intent.putExtra(App.profileInfoText, task.final_output);
+            startActivity(intent);
+        }
+        catch (NullPointerException e){
+            Log.e(App.getTag(), "auto login failed");
+        }
+        catch (InterruptedException e){
+            Log.e(App.getTag(), "request timed out");
+        }
+        catch (Exception e){
+            Log.e(App.getTag(), "other exception");
+        }
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -156,6 +189,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.sign_in_button) {
+            Log.e(App.getTag(), "Google Login Button Pushed");
             startActivity(new Intent(this, GoogleLoginActivity.class));
         }
 
