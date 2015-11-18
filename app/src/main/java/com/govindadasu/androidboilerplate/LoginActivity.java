@@ -3,6 +3,7 @@ package com.govindadasu.androidboilerplate;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
@@ -20,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,10 +32,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.ProfileTracker;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -64,6 +80,63 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    protected static CallbackManager mCallbackManager;
+    private ProfileTracker mProfileTracker;
+    private com.facebook.AccessToken accessToken;
+    private Activity mainActivity = this;
+
+    private FacebookCallback<LoginResult> mCallback = new FacebookCallback<LoginResult>() {
+        @Override
+        public void onSuccess(final LoginResult loginResult) {
+            GraphRequest request = GraphRequest.newMeRequest(
+                    loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                        @Override
+                        public void onCompleted(JSONObject me, GraphResponse response) {
+                            if (response.getError() != null) {
+                                Log.i(App.getTag(), "error");
+                            } else {
+                                String email = me.optString("email");
+                                String id = me.optString("id");
+                                String name = me.optString("name");
+                                String message = name + ' ' + email + ' ' + id;
+                                Log.e(App.getTag(), message);
+                                Connection_Task task = new Connection_Task();
+                                task.parameters =
+                                        "grant_type=convert_token&" +
+                                                "client_id=TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU&" +
+                                                "client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&" +
+                                                "backend=facebook&" +
+                                                "token=" + loginResult.getAccessToken().getToken();
+                                task.execute("https://forge.fwd.wf/auth/convert-token");
+                                try {
+                                    task.get(100000, TimeUnit.MILLISECONDS);
+                                    Intent intent = new Intent(getBaseContext(), Profile_View.class);
+                                    intent.putExtra(App.profileInfoText, task.final_output);
+                                    startActivity(intent);
+                                }
+                                catch (Exception e){
+                                    Log.e(App.getTag(), "timeout failed to server");
+                                }
+
+                            }
+                        }
+                    });
+            Bundle parameters = new Bundle();
+            parameters.putString("fields", "id, first_name, last_name, email, gender, birthday, location");
+            request.setParameters(parameters);
+            request.executeAsync();
+        }
+
+        @Override
+        public void onCancel() {
+            Log.e(App.getTag(), "cancel");
+        }
+
+        @Override
+        public void onError(FacebookException e) {
+            Log.e(App.getTag(), "error");
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,6 +171,13 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         SignInButton btn = (SignInButton)findViewById(R.id.sign_in_button);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
+
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        LoginButton fb_login_button = (LoginButton)findViewById(R.id.fb_login_button);
+        fb_login_button.setReadPermissions(Arrays.asList("email", "user_photos", "public_profile"));
+        LoginManager.getInstance().logOut();
+        mCallbackManager = CallbackManager.Factory.create();
+        fb_login_button.registerCallback(mCallbackManager, mCallback);
     }
 
     private void populateAutoComplete() {

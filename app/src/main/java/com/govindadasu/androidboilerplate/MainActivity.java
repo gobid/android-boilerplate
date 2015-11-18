@@ -4,11 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
-import android.content.pm.Signature;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,6 +29,7 @@ import org.json.JSONObject;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity implements
         View.OnClickListener{
@@ -47,7 +48,7 @@ public class MainActivity extends AppCompatActivity implements
 
     private FacebookCallback<LoginResult>  mCallback = new FacebookCallback<LoginResult>() {
         @Override
-        public void onSuccess(LoginResult loginResult) {
+        public void onSuccess(final LoginResult loginResult) {
             GraphRequest request = GraphRequest.newMeRequest(
                     loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
                         @Override
@@ -59,9 +60,25 @@ public class MainActivity extends AppCompatActivity implements
                                 String id = me.optString("id");
                                 String name = me.optString("name");
                                 String message = name + ' ' + email + ' ' + id;
-                                Intent intent = new Intent(getBaseContext(), Profile_View.class);
-                                intent.putExtra(App.profileInfoText, message);
-                                startActivity(intent);
+                                Log.e(App.getTag(), message);
+                                Connection_Task task = new Connection_Task();
+                                task.parameters =
+                                        "grant_type=convert_token&" +
+                                                "client_id=TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU&" +
+                                                "client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&" +
+                                                "backend=facebook&" +
+                                                "token=" + loginResult.getAccessToken().getToken();
+                                task.execute("https://forge.fwd.wf/auth/convert-token");
+                                try {
+                                    task.get(10000, TimeUnit.MILLISECONDS);
+                                    Intent intent = new Intent(getBaseContext(), Profile_View.class);
+                                    intent.putExtra(App.profileInfoText, task.final_output);
+                                    startActivity(intent);
+                                }
+                                catch (Exception e){
+                                    Log.e(App.getTag(), "timeout failed to server");
+                                }
+
                             }
                         }
                     });
@@ -94,10 +111,8 @@ public class MainActivity extends AppCompatActivity implements
 
         setContentView(R.layout.activity_main);
         mTextDetails = (TextView)findViewById(R.id.mTextDetails);
-
         Connection_Task task = new Connection_Task();
-        task.parameters = "client_id=TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU&client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&grant_type=password&username=admin&password=admin";
-        task.execute("https://forge.fwd.wf/auth/token");
+
 
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
@@ -107,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
                 mTextDetails.setText("KeyHash:" + Base64.encodeToString(md.digest(), Base64.DEFAULT));
-                Log.e(App.getTag(), "KeyHash:" + Base64.encodeToString(md.digest(), Base64.DEFAULT));
+                Log.e(App.getTag(), mTextDetails.getText().toString());
             }
         } catch (Exception e) {
             mTextDetails.setText("Error");

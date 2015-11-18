@@ -17,12 +17,14 @@ import java.net.URLConnection;
  */
 public class Connection_Task extends AsyncTask<String, Void, String> {
     public String parameters="";
+    public String final_output = "nothing right now";
     @Override
     protected String doInBackground(String... urls) {
         String output = null;
         for (String url : urls) {
             output = getOutputFromUrl(url);
         }
+        final_output = output;
         return output;
     }
 
@@ -56,6 +58,7 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
 
             OutputStreamWriter writer = new OutputStreamWriter(httpConnection.getOutputStream());
             String urlParameters = parameters;
+            Log.e(App.getTag(), urlParameters);
             writer.write(urlParameters);
             writer.flush();
 
@@ -64,7 +67,7 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
                 stream = httpConnection.getInputStream();
             }
             else{
-                Log.e(App.getTag(), "couldn't connect code" + httpConnection.getResponseCode());
+                Log.e(App.getTag(), "couldn't connect code: " + httpConnection.getResponseCode());
             }
             writer.close();
         } catch (Exception ex) {
@@ -76,5 +79,7 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String output) {
         Log.e(App.getTag(), "request output:" + output);
+
+
     }
 }
