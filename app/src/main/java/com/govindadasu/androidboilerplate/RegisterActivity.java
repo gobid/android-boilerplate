@@ -190,7 +190,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             task.parameters ="username=" + email +
                             "&email=" + email +
                             "&password=" + password;
-            task.execute("https://forge.fwd.wf/djoser-auth/register/");
+            task.execute(R.string.rest_api_url + "/djoser-auth/register/");
             try {
                 task.get(15000, TimeUnit.MILLISECONDS);
                 Toast.makeText(getApplicationContext(), (String) "We got you registered. Please check your email for the activiation link",

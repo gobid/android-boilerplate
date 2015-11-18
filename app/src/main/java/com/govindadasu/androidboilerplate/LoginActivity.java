@@ -199,7 +199,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                             "client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&" +
                             "username=" + email +
                             "&password=" + password;
-            task.execute("https://forge.fwd.wf/auth/token");
+            task.execute(R.string.rest_api_url + "/auth/token");
             try {
                 task.get(10000, TimeUnit.MILLISECONDS);
                 Intent intent = new Intent(getBaseContext(), Profile_View.class);

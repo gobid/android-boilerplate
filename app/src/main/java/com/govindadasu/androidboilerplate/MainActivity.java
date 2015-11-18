@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements
                                                 "client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&" +
                                                 "backend=facebook&" +
                                                 "token=" + loginResult.getAccessToken().getToken();
-                                task.execute("https://forge.fwd.wf/auth/convert-token");
+                                task.execute(R.string.rest_api_url + "/auth/convert-token");
                                 try {
                                     task.get(10000, TimeUnit.MILLISECONDS);
                                     Intent intent = new Intent(getBaseContext(), Profile_View.class);
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
 
-        attemptAutoLogin();
+        //attemptAutoLogin();
 
         setContentView(R.layout.activity_main);
         mTextDetails = (TextView)findViewById(R.id.mTextDetails);
@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements
                             "client_id=TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU&" +
                             "client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&" +
                             "refresh_token=" + access_token;
-            task.execute("https://forge.fwd.wf/auth/token");
+            task.execute(R.string.rest_api_url + "/auth/token");
             task.get(10000, TimeUnit.MILLISECONDS);
             Intent intent = new Intent(getBaseContext(), Profile_View.class);
             intent.putExtra(App.profileInfoText, task.final_output);
