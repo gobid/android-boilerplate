@@ -3,6 +3,7 @@ package com.govindadasu.androidboilerplate;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,6 +33,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -185,8 +188,20 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            Connection_Task task = new Connection_Task();
+            task.parameters ="username=" + email +
+                            "&email=" + email +
+                            "&password=" + password;
+            task.execute("https://forge.fwd.wf/djoser-auth/register/");
+            try {
+                task.get(10000, TimeUnit.MILLISECONDS);
+                Intent intent = new Intent(getBaseContext(), Profile_View.class);
+                intent.putExtra(App.profileInfoText, task.final_output);
+                startActivity(intent);
+            }
+            catch (Exception e){
+                Log.e(App.getTag(), "!!!!Give feedback to user that couldn't register!!!!");
+            }
         }
     }
 

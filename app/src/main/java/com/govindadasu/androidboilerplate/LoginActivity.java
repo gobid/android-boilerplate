@@ -93,7 +93,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                         @Override
                         public void onCompleted(JSONObject me, GraphResponse response) {
                             if (response.getError() != null) {
-                                Log.i(App.getTag(), "error");
+                                Log.e(App.getTag(), "error");
                             } else {
                                 String email = me.optString("email");
                                 String id = me.optString("id");
@@ -271,14 +271,29 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            Connection_Task task = new Connection_Task();
+            task.parameters =
+                    "grant_type=password&" +
+                            "client_id=TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU&" +
+                            "client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&" +
+                            "username=" + email +
+                            "&password=" + password;
+            task.execute("https://forge.fwd.wf/auth/token");
+            try {
+                task.get(10000, TimeUnit.MILLISECONDS);
+                Intent intent = new Intent(getBaseContext(), Profile_View.class);
+                intent.putExtra(App.profileInfoText, task.final_output);
+                startActivity(intent);
+            }
+            catch (Exception e){
+                Log.e(App.getTag(), "!!!!Give feedback to user that couldn't login!!!!");
+            }
         }
     }
 
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
-        return email.contains("@");
+        return true;//email.contains("@");
     }
 
     private boolean isPasswordValid(String password) {
@@ -395,7 +410,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
+
+
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
                 return false;
@@ -441,5 +457,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         // ...
     }
+
 }
 
