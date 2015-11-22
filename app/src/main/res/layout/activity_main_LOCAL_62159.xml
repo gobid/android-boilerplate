@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    <TextView
+        android:id="@+id/mTextDetails"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Welcome"
+        android:textSize="18sp" />
+
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_weight="75"
+        android:layout_width="match_parent"
+        android:layout_height="0dp">
+    </android.support.v4.view.ViewPager>
+
+    <LinearLayout
+        android:id="@+id/dotsLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@+id/btnSignUp"
+        android:layout_weight="10"
+        android:background="#4343"
+        android:gravity="center"
+        android:orientation="horizontal">
+    </LinearLayout>
+
+    <com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/fb_login_button"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_centerInParent="true"
+        android:layout_weight="20"
+        facebook:com_facebook_login_text="Connect with Facebook" />
+
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/sign_in_button"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="20"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal" />
+
+
+    <Button
+        android:id="@+id/btnSingIn"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:onClick="goToSignIn"
+        android:padding="10dp"
+        android:text="Sign In"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/btnSignUp"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:onClick="goToRegistration"
+        android:text="Sign Up"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

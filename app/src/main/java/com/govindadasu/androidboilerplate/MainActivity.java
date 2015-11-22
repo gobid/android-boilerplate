@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity implements
 
         try {
             PackageInfo info = getPackageManager().getPackageInfo(
-                    "com.govindadasu.androidboilerplate",
+                    mainActivity.getPackageName(),
                     PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
@@ -136,11 +136,13 @@ public class MainActivity extends AppCompatActivity implements
 
         SignInButton btn = (SignInButton)findViewById(R.id.sign_in_button);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-        FacebookSdk.sdkInitialize(getApplicationContext());
+
+
         LoginButton fb_login_button = (LoginButton)findViewById(R.id.fb_login_button);
         fb_login_button.setReadPermissions(Arrays.asList("email", "user_photos", "public_profile"));
         LoginManager.getInstance().logOut();
         mCallbackManager = CallbackManager.Factory.create();
+
         fb_login_button.registerCallback(mCallbackManager, mCallback);
 
     }

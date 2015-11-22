@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.content.pm.PackageManager;
@@ -38,7 +39,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,CallBackListener{
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -62,11 +63,13 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        mContext=RegisterActivity.this;
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
@@ -186,22 +189,19 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            Connection_Task task = new Connection_Task();
-            task.parameters ="username=" + email +
-                            "&email=" + email +
-                            "&password=" + password;
-            task.execute(R.string.rest_api_url + "/djoser-auth/register/");
-            try {
-                task.get(15000, TimeUnit.MILLISECONDS);
-                Toast.makeText(getApplicationContext(), (String) "We got you registered. Please check your email for the activiation link",
-                        Toast.LENGTH_LONG).show();
-            }
-            catch (Exception e){
-                Log.e(App.getTag(), "error", e);
-                Toast.makeText(getApplicationContext(), (String) "Sorry we couldn't get you registered. Please check your credentials again",
-                        Toast.LENGTH_LONG).show();
-            }
+            signUp(email, password);
         }
+    }
+
+    private void signUp(String email,String password) {
+        Connection_Task task = new Connection_Task();
+        task.parameters ="username=" + email +
+                "&email=" + email +
+                "&password=" + password;
+        task.setResponseListener(this);
+        task.setSarverURL(mContext.getString(R.string.rest_api_url) + "/djoser-auth/register/");
+        task.execute();
+
     }
 
     private boolean isEmailValid(String email) {
@@ -284,6 +284,12 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
 
     }
 
+    @Override
+    public void onSuccess(String response) {
+        showProgress(false);
+        Toast.makeText(mContext,response,Toast.LENGTH_LONG).show();
+    }
+
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -344,6 +350,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
+            Log.d(Constents.DEBUG_KEY,"ON post execute connection task.");
             showProgress(false);
 
             if (success) {
