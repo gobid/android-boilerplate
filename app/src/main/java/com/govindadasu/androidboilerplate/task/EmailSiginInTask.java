@@ -1,7 +1,11 @@
-package com.govindadasu.androidboilerplate;
+package com.govindadasu.androidboilerplate.task;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
+import com.govindadasu.androidboilerplate.app.App;
+import com.govindadasu.androidboilerplate.constant.Constants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,28 +19,22 @@ import java.net.URLConnection;
 /**
  * Created by abhishekgarg on 11/17/15.
  */
-public class Connection_Task extends AsyncTask<String, Void, String> {
+public class EmailSiginInTask extends AsyncTask<String, Void, String> {
     public String parameters="";
     private String sarverURL="";
-    public String final_output = "nothing right now";
     int responseCode = -1;
-    private CallBackListener responseListener;
+    private EmailSignInCallback emailSignInCallback;
 
     @Override
     protected String doInBackground(String... urls) {
-        String output = null;
-
-            output = getOutputFromUrl(sarverURL);
-
-        final_output = output;
-        return output;
+        return getOutputFromUrl(sarverURL);
     }
 
     private String getOutputFromUrl(String url_string) {
         StringBuffer output = new StringBuffer("");
         try {
             InputStream stream = getHttpConnection(new URL(url_string));
-            if(stream==null) return final_output;
+            if(stream==null) return null;
             BufferedReader buffer = new BufferedReader(
                     new InputStreamReader(stream));
             String s = "";
@@ -45,8 +43,6 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
         } catch (Exception e1) {
             e1.printStackTrace();
         }
-        if(output.toString().contains("username")&&output.toString().contains("email"))
-            return "Registered Successfully";
         return output.toString();
     }
 
@@ -54,7 +50,7 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
     private InputStream getHttpConnection(URL url)
             throws IOException {
         InputStream stream = null;
-        Log.d(Constents.DEBUG_KEY,"Sarver url "+url.toString());
+        Log.d(Constants.DEBUG_KEY,"Sarver url "+url.toString());
         URLConnection connection = url.openConnection();
 
         try {
@@ -66,7 +62,7 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
 
             OutputStreamWriter writer = new OutputStreamWriter(httpConnection.getOutputStream());
             String urlParameters = parameters;
-            Log.d(Constents.DEBUG_KEY,"parameters : "+parameters);
+            Log.d(Constants.DEBUG_KEY,"parameters : "+parameters);
             Log.e(App.getTag(), urlParameters);
             writer.write(urlParameters);
             writer.flush();
@@ -76,13 +72,13 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
                 stream = httpConnection.getInputStream();
                 responseCode = httpConnection.getResponseCode();
             }
-            else{final_output="Already Registered";
-                Log.e(App.getTag(), "couldn't connect code: " + httpConnection.getResponseCode());
-                Log.d(Constents.DEBUG_KEY, "couldn't connect code: " + httpConnection.getResponseCode());
-            }
+//            else{final_output="Already Registered";
+//                Log.e(App.getTag(), "couldn't connect code: " + httpConnection.getResponseCode());
+//                Log.d(Constents.DEBUG_KEY, "couldn't connect code: " + httpConnection.getResponseCode());
+//            }
             writer.close();
         } catch (Exception ex) {
-            Log.d(Constents.DEBUG_KEY,ex.getMessage());
+            Log.d(Constants.DEBUG_KEY,ex.getMessage());
             ex.printStackTrace();
         }
         return stream;
@@ -90,14 +86,14 @@ public class Connection_Task extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String output) {
-        responseListener.onSuccess(output);
+        emailSignInCallback.onSuccess(output);
         Log.e(App.getTag(), "request output:" + output);
 
 
     }
 
-    public void setResponseListener(CallBackListener responseListener) {
-        this.responseListener = responseListener;
+    public void setEmailSignInCallback(EmailSignInCallback emailSignInCallback) {
+        this.emailSignInCallback = emailSignInCallback;
     }
 
     public String getSarverURL() {

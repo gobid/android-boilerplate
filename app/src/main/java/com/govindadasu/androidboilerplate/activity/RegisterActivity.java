@@ -1,4 +1,4 @@
-package com.govindadasu.androidboilerplate;
+package com.govindadasu.androidboilerplate.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -30,16 +30,20 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.govindadasu.androidboilerplate.task.EmailSiginInTask;
+import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
+import com.govindadasu.androidboilerplate.R;
+import com.govindadasu.androidboilerplate.constant.Constants;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,CallBackListener{
+public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,EmailSignInCallback {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -68,7 +72,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
         mContext=RegisterActivity.this;
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -194,11 +198,11 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     }
 
     private void signUp(String email,String password) {
-        Connection_Task task = new Connection_Task();
+        EmailSiginInTask task = new EmailSiginInTask();
         task.parameters ="username=" + email +
                 "&email=" + email +
                 "&password=" + password;
-        task.setResponseListener(this);
+        task.setEmailSignInCallback(this);
         task.setSarverURL(mContext.getString(R.string.rest_api_url) + "/djoser-auth/register/");
         task.execute();
 
@@ -350,7 +354,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            Log.d(Constents.DEBUG_KEY,"ON post execute connection task.");
+            Log.d(Constants.DEBUG_KEY,"ON post execute connection task.");
             showProgress(false);
 
             if (success) {

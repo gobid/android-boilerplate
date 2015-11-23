@@ -20,4 +20,10 @@
     <string name="title_activity_main2">Main2Activity</string>
         <string name="old_url">https://forge.fwd.wf</string>
         <string name="rest_api_url">http://apitodo.flipbitsolutions.com</string>
-</resources>
+        <string name="signing_up">Signing in, Please wait...</string>
+        <string name="msg_sigining_in">Signing in, Please wait...</string>
+        <string name="msg_unable_to_login">Unable to sign in. Please try again later.</string>
+        <string name="title_alert">Alert</string>
+    <string name="title_activity_maps">Map</string>
+        <string name="msg_loading">Loading, Please wait...</string>
+    </resources>

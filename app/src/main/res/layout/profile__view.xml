@@ -1,17 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:fitsSystemWindows="true"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="com.forge.simpleandroid.Profile_View">
 
     <TextView
         android:id="@+id/userInfo"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Hi"
-        android:textSize="18sp" />
+        android:layout_height="wrap_content" android:textColor="#ff0045ff"
+        android:gravity="center" android:layout_marginTop="10dp"
+        android:text="Hi" android:layout_centerHorizontal="true"
+        android:textSize="22sp" />
 
-</android.support.design.widget.CoordinatorLayout>
+    <com.facebook.login.widget.ProfilePictureView
+        android:id="@+id/fb_profile_pic_view"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone"></com.facebook.login.widget.ProfilePictureView>
+
+    <ImageView
+        android:id="@+id/google_profile_pic"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
+
+    <Button
+        android:layout_width="115dp"
+        android:layout_height="65dp"
+        android:text="Logout"
+        android:id="@+id/btnLogout" android:onClick="logoutUser"
+        android:layout_alignParentBottom="true" android:layout_marginBottom="15dp"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>
