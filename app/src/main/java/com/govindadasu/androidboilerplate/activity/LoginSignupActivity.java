@@ -97,6 +97,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     @Override
     public void onConnected(Bundle connectionHint) {
         if(isUserLoggedOut()){
+            getIntent().putExtra(TAG_LOGOUT, false);
             signOut();
             startLoginFlow();
             return;
