@@ -9,8 +9,9 @@ import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.plus.Plus;
-
+import com.google.android.gms.common.api.Status;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
@@ -132,12 +133,13 @@ public abstract class PlusBaseActivity extends Activity
         if (mPlusClient.isConnected()) {
             // Clear the default account in order to allow the user to potentially choose a
             // different account from the account chooser.
-            mPlusClient.clearDefaultAccountAndReconnect();
+            Plus.AccountApi.clearDefaultAccount(getPlusClient());
+
 
             // Disconnect from Google Play Services, then reconnect in order to restart the
             // process from scratch.
             initiatePlusClientDisconnect();
-
+//revokeAccess();
             Log.v(TAG, "Sign out successful!");
         }
 
@@ -151,17 +153,21 @@ public abstract class PlusBaseActivity extends Activity
 
         if (mPlusClient.isConnected()) {
             // Clear the default account as in the Sign Out.
-            mPlusClient.clearDefaultAccountAndReconnect();
+            Plus.AccountApi.clearDefaultAccount(getPlusClient());
 
             // Revoke access to this entire application. This will call back to
             // onAccessRevoked when it is complete, as it needs to reach the Google
             // authentication servers to revoke all tokens.
-//            mPlusClient.revokeAccessAndDisconnect(new PlusClient.OnAccessRevokedListener() {
-//                public void onAccessRevoked(ConnectionResult result) {
-//                    updateConnectButtonState();
-//                    onPlusClientRevokeAccess();
-//                }
-//            });
+
+            Plus.AccountApi.revokeAccessAndDisconnect(getPlusClient())
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status arg0) {
+
+                            updateConnectButtonState();
+                            onPlusClientRevokeAccess();
+                        }
+                    });
         }
 
     }
@@ -268,6 +274,8 @@ public abstract class PlusBaseActivity extends Activity
                 // This is a local helper function that starts the resolution of the problem,
                 // which may be showing the user an account chooser or similar.
                 startResolution();
+            }else{
+                onPlusClientSignOut();
             }
         }
     }

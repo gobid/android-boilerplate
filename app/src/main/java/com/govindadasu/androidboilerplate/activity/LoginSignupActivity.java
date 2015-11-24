@@ -83,7 +83,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     @Override
     protected void onPlusClientSignOut() {
-
+       startLoginFlow();
     }
 
     @Override
@@ -92,6 +92,16 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             showProgressDialog(R.string.msg_sigining_in);
         else
             hideProgressDialog();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        if(isUserLoggedOut()){
+            signOut();
+            startLoginFlow();
+            return;
+        }
+        super.onConnected(connectionHint);
     }
 
     @Override
@@ -111,11 +121,22 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         // facebook
         initializeFacebookLogin();
 
-        if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(TAG_LOGOUT, false)) {
+        if (isUserLoggedOut()) {
             onUserLoggedOut();
         } else {
             checkIfUserAlreadyLoggedIn();
         }
+
+        findViewById(R.id.btnSignUp).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                gotoRegistration(view);
+            }
+        });
+    }
+
+    private boolean isUserLoggedOut() {
+        return getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(TAG_LOGOUT, false);
     }
 
     private void initializeGoogleLogin() {
@@ -163,7 +184,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         // if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_FACEBOOK) {
         LoginManager.getInstance().logOut();
         //} else if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_GOOGLE) {
-        signOut();
+        initiatePlusClientConnect();
         // }
         User.setLoggedInUser(null);
         startLoginFlow();
@@ -522,4 +543,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
 
+    public void gotoRegistration(View v){
+        Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();
+    }
 }

@@ -73,7 +73,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:padding="10dp"
-                android:onClick="goToRegistration"
                 android:text="Sign Up"
                 android:layout_gravity="center_horizontal" />
         </TableRow>
