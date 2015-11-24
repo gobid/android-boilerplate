@@ -69,6 +69,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     // login with email
     private AutoCompleteTextView edtEmail;
     private EditText edtPassword;
+    private boolean isLoggedOut;
 
 
     @Override
@@ -97,7 +98,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     @Override
     public void onConnected(Bundle connectionHint) {
         if(isUserLoggedOut()){
-            getIntent().putExtra(TAG_LOGOUT, false);
+            isLoggedOut = false;
             signOut();
             startLoginFlow();
             return;
@@ -122,6 +123,9 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         // facebook
         initializeFacebookLogin();
 
+       isLoggedOut = getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(TAG_LOGOUT, false);
+       clearLogoutFlag();
+
         if (isUserLoggedOut()) {
             onUserLoggedOut();
         } else {
@@ -137,7 +141,11 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
     private boolean isUserLoggedOut() {
-        return getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(TAG_LOGOUT, false);
+        return isLoggedOut;// getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(TAG_LOGOUT, false);
+    }
+    private void clearLogoutFlag() {
+        if(getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAG_LOGOUT))
+         getIntent().getExtras().remove(TAG_LOGOUT);
     }
 
     private void initializeGoogleLogin() {
@@ -145,6 +153,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         signInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                isLoggedOut = false;
                 signIn();
             }
         });
@@ -182,11 +191,12 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
 
     private void onUserLoggedOut() {
-        // if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_FACEBOOK) {
-        LoginManager.getInstance().logOut();
-        //} else if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_GOOGLE) {
+       // if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_FACEBOOK) {
+            LoginManager.getInstance().logOut();
+        //}
+        //else if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_GOOGLE) {
         initiatePlusClientConnect();
-        // }
+        //}
         User.setLoggedInUser(null);
         startLoginFlow();
     }
@@ -254,6 +264,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         btnSignIn.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 attemptLogin();
             }
         });
