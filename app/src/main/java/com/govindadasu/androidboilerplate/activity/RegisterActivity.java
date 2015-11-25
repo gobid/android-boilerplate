@@ -30,7 +30,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.govindadasu.androidboilerplate.task.EmailSiginInTask;
+import com.govindadasu.androidboilerplate.task.SignInTask;
 import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
 import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.constant.Constants;
@@ -198,7 +198,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
     }
 
     private void signUp(String email,String password) {
-        EmailSiginInTask task = new EmailSiginInTask();
+        SignInTask task = new SignInTask();
         task.parameters ="username=" + email +
                 "&email=" + email +
                 "&password=" + password;

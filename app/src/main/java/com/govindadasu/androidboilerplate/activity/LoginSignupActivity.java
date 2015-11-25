@@ -4,15 +4,18 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -43,7 +46,9 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.govindadasu.androidboilerplate.app.App;
-import com.govindadasu.androidboilerplate.task.EmailSiginInTask;
+import com.govindadasu.androidboilerplate.bo.SarverAccessTocken;
+import com.govindadasu.androidboilerplate.constant.Constants;
+import com.govindadasu.androidboilerplate.task.SignInTask;
 import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
 import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.bo.User;
@@ -70,6 +75,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     private AutoCompleteTextView edtEmail;
     private EditText edtPassword;
     private boolean isLoggedOut;
+    private Context mContext;
 
 
     @Override
@@ -115,6 +121,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this);
+        mContext=LoginSignupActivity.this;
         setContentView(R.layout.activity_login_signup);
         // email
         initializeEmailLogin();
@@ -324,6 +331,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         String email = edtEmail.getText().toString();
         String password = edtPassword.getText().toString();
 
+
         boolean cancel = false;
         View focusView = null;
 
@@ -352,11 +360,11 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         } else {
             showProgressDialog(R.string.msg_sigining_in);
 
-            final EmailSiginInTask emailSiginInTask = new EmailSiginInTask();
+            final SignInTask emailSiginInTask = new SignInTask();
             emailSiginInTask.parameters =
                     "grant_type=password&" +
-                            "client_id=TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU&" +
-                            "client_secret=4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ&" +
+                            "client_id="+Constants.CLIENT_ID+"&" +
+                            "client_secret="+Constants.CLIENT_SECRIT+"&" +
                             "username=" + email +
                             "&password=" + password;
 
@@ -542,8 +550,9 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                             user.setUserId(AccessToken.getCurrentAccessToken().getUserId());
                             user.setLoginType(User.LOGIN_TYPE_FACEBOOK);
                             User.setLoggedInUser(user);
-                            hideProgressDialog();
-                            onUserLoggedIn();
+
+                            signInFBTocken();
+
                         }
                     }
                 });
@@ -554,8 +563,54 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         request.executeAsync();
     }
 
+    private void signInFBTocken() {
+
+        String accessTocken= User.getLoggedInUser().getAccessToken();
+        SignInTask signInTask=new SignInTask();
+        signInTask.setSarverURL(Constants.SARVER_URL);
+        signInTask.setAPIString(Constants.API_EXCHANGE_FB_TOCKEN);
+        signInTask.parameters=getFBTockenLoginParameters(accessTocken);
+
+        signInTask.execute();
+        signInTask.setEmailSignInCallback(new EmailSignInCallback() {
+            @Override
+            public void onSuccess(String response) {
+
+                if(response!=null)
+                {
+                    Log.d(Constants.DEBUG_KEY,"GEt Sarver Tocken Against FB Tocken "+response.toString());
+                }
+                else {
+                    Log.d(Constants.DEBUG_KEY,"GEt Sarver Tocken Against FB Tocken  NULL");
+                }
+
+                SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(LoginSignupActivity.this);
+                SharedPreferences.Editor editor=preferences.edit();
+                editor.putString(mContext.getString(R.string.key_user_access_tocken),response).commit();
+
+            }
+        });
+        Log.d(Constants.DEBUG_KEY, "Access Tocken " + accessTocken);
+        hideProgressDialog();
+        onUserLoggedIn();
+    }
+
 
     public void gotoRegistration(View v){
         Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();
+    }
+
+    private String getFBTockenLoginParameters(String fbTocken)
+
+    {
+String parameters="";
+
+        parameters+="client_id="+Constants.CLIENT_ID+"&";
+        parameters+="client_secret="+Constants.CLIENT_SECRIT+"&";
+        parameters+="backend="+"facebook&";
+        parameters+="token="+fbTocken+"&";
+        parameters+="grant_type="+"convert_token";
+
+        return parameters;
     }
 }

@@ -19,7 +19,7 @@ import java.net.URLConnection;
 /**
  * Created by abhishekgarg on 11/17/15.
  */
-public class EmailSiginInTask extends AsyncTask<String, Void, String> {
+public class SignInTask extends AsyncTask<String, Void, String> {
     public String parameters="";
     private String sarverURL="";
     int responseCode = -1;
@@ -31,6 +31,7 @@ public class EmailSiginInTask extends AsyncTask<String, Void, String> {
     }
 
     private String getOutputFromUrl(String url_string) {
+
         StringBuffer output = new StringBuffer("");
         try {
             InputStream stream = getHttpConnection(new URL(url_string));
@@ -102,5 +103,10 @@ public class EmailSiginInTask extends AsyncTask<String, Void, String> {
 
     public void setSarverURL(String sarverURL) {
         this.sarverURL = sarverURL;
+    }
+
+    public void setAPIString(String apiURL) {
+
+        sarverURL+="/"+apiURL;
     }
 }
