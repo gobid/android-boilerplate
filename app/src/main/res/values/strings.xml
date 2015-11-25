@@ -26,5 +26,15 @@
         <string name="title_alert">Alert</string>
     <string name="title_activity_maps">Map</string>
         <string name="msg_loading">Loading, Please wait...</string>
+
         <string name="key_user_access_tocken">user_access_tocken</string>
+
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_change_password">ChangePasswordActivity</string>
+    <string name="hint_new_password">Enter new password</string>
+
+        <string name="change_password">Change Password</string>
+        <string name="txtFirstName">First Name</string>
+
+
     </resources>
