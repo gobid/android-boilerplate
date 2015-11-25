@@ -1,5 +1,6 @@
 package com.govindadasu.androidboilerplate.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,10 +16,11 @@ import com.facebook.login.widget.ProfilePictureView;
 import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.activity.LoginSignupActivity;
 import com.govindadasu.androidboilerplate.bo.User;
+import com.govindadasu.androidboilerplate.task.LoadProfileImage;
 
 import java.io.InputStream;
 
-public class Profile_View extends AppCompatActivity {
+public class Profile_View extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,29 +48,5 @@ public class Profile_View extends AppCompatActivity {
         finish();
     }
 
-    private class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
 
-        public LoadProfileImage(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-            bmImage.setVisibility(View.VISIBLE);
-        }
-    }
 }

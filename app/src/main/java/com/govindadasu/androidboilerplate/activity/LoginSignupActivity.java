@@ -192,8 +192,21 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     // Generic
 
     private void onUserLoggedIn() {
-        startActivity(new Intent(this, Profile_View.class));
-        finish();
+
+        showProgressDialog(R.string.msg_loading);
+        SignInTask signInTask=new SignInTask();
+        signInTask.setSarverURL("http://apitodo.flipbitsolutions.com/djoser-auth/me/");
+        signInTask.setAutheanticationTocken("Django Qj7uflXr6gatIVmDDrvkJDDEGTErlz");
+        signInTask.setEmailSignInCallback(new EmailSignInCallback() {
+            @Override
+            public void onSuccess(String response) {
+                Log.d(Constants.DEBUG_KEY,"Authentation Tocken Response "+response.toString());
+                hideProgressDialog();
+                startActivity(new Intent(mContext, LandingActivity.class));
+                finish();
+            }
+        });
+
     }
 
 
@@ -378,7 +391,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                     }
                     if (response.toString().contains("username") && response.toString().contains("email")) {
 
-                        Intent intent = new Intent(getBaseContext(), Profile_View.class);
+                        Intent intent = new Intent(getBaseContext(), LandingActivity.class);
                         intent.putExtra(App.profileInfoText, response);
                         startActivity(intent);
                     } else {

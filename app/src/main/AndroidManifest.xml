@@ -71,6 +71,10 @@
             android:name=".activity.ChangePasswordActivity"
             android:label="@string/title_activity_change_password" >
         </activity>
+        <activity
+            android:name=".activity.LandingActivity"
+            android:label="@string/title_activity_landing" >
+        </activity>
     </application>
 
 </manifest>

@@ -3,8 +3,8 @@ package com.govindadasu.androidboilerplate.task;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
 import com.govindadasu.androidboilerplate.app.App;
+import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
 import com.govindadasu.androidboilerplate.constant.Constants;
 
 import java.io.BufferedReader;
@@ -17,9 +17,9 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * Created by abhishekgarg on 11/17/15.
+ *   on 11/26/2015.
  */
-public class SignInTask extends AsyncTask<String, Void, String> {
+public class ChangePasswordTask extends AsyncTask<String, Void, String> {
     public String parameters="";
     private String sarverURL="";
     int responseCode = -1;
@@ -27,10 +27,7 @@ public class SignInTask extends AsyncTask<String, Void, String> {
 
     private String autheanticationTocken=null;
 
-    @Override
-    protected String doInBackground(String... urls) {
-        return getOutputFromUrl(sarverURL);
-    }
+
 
     private String getOutputFromUrl(String url_string) {
 
@@ -53,18 +50,12 @@ public class SignInTask extends AsyncTask<String, Void, String> {
     private InputStream getHttpConnection(URL url)
             throws IOException {
         InputStream stream = null;
-        Log.d(Constants.DEBUG_KEY,"Sarver url "+url.toString());
+        Log.d(Constants.DEBUG_KEY, "Sarver url " + url.toString());
         URLConnection connection = url.openConnection();
 
         try {
             HttpURLConnection httpConnection = (HttpURLConnection) connection;
-            if(autheanticationTocken!=null)
-            { httpConnection.setRequestProperty("Authorization", autheanticationTocken);
-                httpConnection.setRequestMethod("GET");
-            }
-            else
-            { httpConnection.setRequestMethod("POST");}
-
+            httpConnection.setRequestMethod("POST");
             httpConnection.setDoOutput(true);
             httpConnection.connect();
             //post
@@ -81,10 +72,7 @@ public class SignInTask extends AsyncTask<String, Void, String> {
                 stream = httpConnection.getInputStream();
                 responseCode = httpConnection.getResponseCode();
             }
-//            else{final_output="Already Registered";
-//                Log.e(App.getTag(), "couldn't connect code: " + httpConnection.getResponseCode());
-//                Log.d(Constents.DEBUG_KEY, "couldn't connect code: " + httpConnection.getResponseCode());
-//            }
+
             writer.close();
         } catch (Exception ex) {
             Log.d(Constants.DEBUG_KEY,ex.getMessage());
@@ -93,13 +81,7 @@ public class SignInTask extends AsyncTask<String, Void, String> {
         return stream;
     }
 
-    @Override
-    protected void onPostExecute(String output) {
-        emailSignInCallback.onSuccess(output);
-        Log.e(App.getTag(), "request output:" + output);
 
-
-    }
 
     public void setEmailSignInCallback(EmailSignInCallback emailSignInCallback) {
         this.emailSignInCallback = emailSignInCallback;
@@ -120,5 +102,19 @@ public class SignInTask extends AsyncTask<String, Void, String> {
 
     public void setAutheanticationTocken(String autheanticationTocken) {
         this.autheanticationTocken = autheanticationTocken;
+    }
+
+
+
+    @Override
+    protected String doInBackground(String... params) {
+        return getOutputFromUrl(sarverURL);
+    }
+
+    @Override
+    protected void onPostExecute(String output) {
+
+        emailSignInCallback.onSuccess(output);
+        Log.e(App.getTag(), "request output:" + output);
     }
 }
