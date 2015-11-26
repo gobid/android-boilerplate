@@ -47,6 +47,8 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.govindadasu.androidboilerplate.app.App;
 import com.govindadasu.androidboilerplate.constant.Constants;
+import com.govindadasu.androidboilerplate.task.EmailSignInTask;
+import com.govindadasu.androidboilerplate.task.EmailSignUpTask;
 import com.govindadasu.androidboilerplate.task.GetUserProfileTask;
 import com.govindadasu.androidboilerplate.task.SignInTask;
 import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
@@ -76,6 +78,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     private EditText edtPassword;
     private boolean isLoggedOut;
     private Context mContext;
+    private String email;
+    private String password;
 
 
     @Override
@@ -339,15 +343,15 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
 
-    private void attemptLogin() {
-
+    private boolean validateInputFields()
+    {
         // Reset errors.
         edtEmail.setError(null);
         edtPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = edtEmail.getText().toString();
-        String password = edtPassword.getText().toString();
+         email = edtEmail.getText().toString();
+         password = edtPassword.getText().toString();
 
 
         boolean cancel = false;
@@ -371,43 +375,28 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             cancel = true;
         }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
+        if(cancel) {focusView.requestFocus();}
+        return !cancel;
+    }
+    private void attemptLogin() {
+
+
+        if (validateInputFields()) {
+
             showProgressDialog(R.string.msg_sigining_in);
 
-            final SignInTask emailSiginInTask = new SignInTask();
-            emailSiginInTask.parameters =
-                    "grant_type=password&" +
-                            "client_id="+Constants.CLIENT_ID+"&" +
-                            "client_secret="+Constants.CLIENT_SECRIT+"&" +
-                            "username=" + email +
-                            "&password=" + password;
-
-            emailSiginInTask.setEmailSignInCallback(new ResponseCallBack() {
+            EmailSignInTask emailSignInTask=new EmailSignInTask();
+            emailSignInTask.setPassword(password);
+            emailSignInTask.setUserName(email);
+            emailSignInTask.setEmailSignInCallback(new ResponseCallBack() {
                 @Override
                 public void onSuccess(String response) {
 
-                    if (response == null) {
-                        showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login);
-                        return;
-                    }
-                    if (response.toString().contains("username") && response.toString().contains("email")) {
-
-                        Intent intent = new Intent(getBaseContext(), LandingActivity.class);
-                        intent.putExtra(App.profileInfoText, response);
-                        startActivity(intent);
-                    } else {
-                        showAlertDialog(R.string.title_alert, response);
-                    }
+                    Log.d(Constants.DEBUG_KEY, "Login with email response " + response);
+                    hideProgressDialog();
                 }
-
             });
-
-            emailSiginInTask.execute(R.string.rest_api_url + "/auth/token");
-
+            emailSignInTask.execute();
         }
     }
 
@@ -614,7 +603,25 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
 
     public void gotoRegistration(View v){
-        Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();
+
+        if(validateInputFields())
+
+        {
+            showProgressDialog(R.string.msg_loading);
+            EmailSignUpTask signUpTask=new EmailSignUpTask();
+            signUpTask.setEmailSignInCallback(new ResponseCallBack() {
+                @Override
+                public void onSuccess(String response) {
+                    Log.d(Constants.DEBUG_KEY,"Sign up REspose "+response);
+                    hideProgressDialog();
+                }
+            });
+            signUpTask.setUserName(email);
+            signUpTask.setPassword(password);
+            signUpTask.execute();
+        }
+
+       else { Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();}
     }
 
     private String getFBTockenLoginParameters(String fbTocken)

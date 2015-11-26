@@ -24,6 +24,8 @@ public class EmailSignUpTask extends AsyncTask<String, Void, String> {
 
     int responseCode = -1;
     private ResponseCallBack emailSignInCallback;
+    private String userName;
+    private String password;
 
     @Override
     protected String doInBackground(String... urls) {
@@ -101,11 +103,15 @@ public class EmailSignUpTask extends AsyncTask<String, Void, String> {
 
 
 
-
-
-
-
     public String getParameters() {
-        return "";
+        return Constants.KEY_USER_NAME+"="+userName+"&"+Constants.KEY_EMAIL+"="+userName+"&"+Constants.KEY_PASSWORD+"="+password;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }
