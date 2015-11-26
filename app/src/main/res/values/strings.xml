@@ -36,6 +36,10 @@
         <string name="change_password">Change Password</string>
         <string name="txtFirstName">First Name</string>
     <string name="title_activity_landing">LandingActivity</string>
+        <string name="gender">Gender</string>
+        <string name="lastName">Last Name</string>
+        <string name="firstName">First Name</string>
+        <string name="userId">User ID</string>
 
 
     </resources>
