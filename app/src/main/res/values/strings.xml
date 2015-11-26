@@ -40,6 +40,7 @@
         <string name="lastName">Last Name</string>
         <string name="firstName">First Name</string>
         <string name="userId">User ID</string>
+        <string name="key_user_info_from_tocken">key_user_info_from_tocken</string>
 
 
     </resources>

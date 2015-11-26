@@ -1,68 +1,45 @@
 package com.govindadasu.androidboilerplate.bo;
 
-import com.google.gson.Gson;
-
-import org.json.JSONObject;
 public class SarverAccessTocken {
 
-
-    private String accessToken;
-
-    private String tokenType;
-
-    private Integer expiresIn;
-
-    private String refreshToken;
-
+    private String access_token;
+    private String token_type;
+    private Integer expires_in;
+    private String refresh_token;
     private String scope;
 
 
-    public static SarverAccessTocken fromJson(String jsonObject)
-    {
-        if(jsonObject==null) return null;
-        Gson gson=new Gson();
-       return gson.fromJson(jsonObject.toString(),SarverAccessTocken.class);
-
+    public String getAccess_token() {
+        return access_token;
     }
 
-    public String getAccessToken() {
-        return accessToken;
+    public void setAccess_token(String access_token) {
+        this.access_token = access_token;
     }
 
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;}
-
-    public String getTokenType() {
-        return tokenType;
+    public String getToken_type() {
+        return token_type;
     }
 
-
-    public void setTokenType(String tokenType) {
-        this.tokenType = tokenType;
+    public void setToken_type(String token_type) {
+        this.token_type = token_type;
     }
 
-
-    public Integer getExpiresIn() {
-        return expiresIn;
+    public Integer getExpires_in() {
+        return expires_in;
     }
 
-
-    public void setExpiresIn(Integer expiresIn) {
-        this.expiresIn = expiresIn;
+    public void setExpires_in(Integer expires_in) {
+        this.expires_in = expires_in;
     }
 
-
-
-    public String getRefreshToken() {
-        return refreshToken;
+    public String getRefresh_token() {
+        return refresh_token;
     }
 
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public void setRefresh_token(String refresh_token) {
+        this.refresh_token = refresh_token;
     }
-
 
     public String getScope() {
         return scope;
@@ -71,10 +48,4 @@ public class SarverAccessTocken {
     public void setScope(String scope) {
         this.scope = scope;
     }
-
-
-
-
-
-
 }
