@@ -214,11 +214,9 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             public void onSuccess(String response) {
 
                 Log.d(Constants.DEBUG_KEY, "Authentation Tocken Response " + response);
-<<<<<<< HEAD
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-=======
 
->>>>>>> ab1ddc72a5765ee60fff776dcc46393ebea23aef
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(mContext.getString(R.string.key_user_info_from_tocken), response).commit();
                 hideProgressDialog();
