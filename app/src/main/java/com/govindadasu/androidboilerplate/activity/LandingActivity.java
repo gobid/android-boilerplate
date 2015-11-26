@@ -29,4 +29,11 @@ public class LandingActivity extends Activity {
         startActivity(intent);
     }
 
+    public void logoutUser(View view) {
+        Intent intent = new Intent(this,LoginSignupActivity.class);
+        intent.putExtra(LoginSignupActivity.TAG_LOGOUT, true);
+        startActivity(intent);
+        finish();
+    }
+
 }

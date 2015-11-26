@@ -3,6 +3,7 @@ package com.govindadasu.androidboilerplate.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +17,7 @@ import com.govindadasu.androidboilerplate.bo.SarverAccessTocken;
 import com.govindadasu.androidboilerplate.bo.User;
 import com.govindadasu.androidboilerplate.task.LoadProfileImage;
 
-public class ProfileActivity extends Activity {
+public class ProfileActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
