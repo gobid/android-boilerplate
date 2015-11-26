@@ -3,7 +3,9 @@ package com.govindadasu.androidboilerplate.task;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.govindadasu.androidboilerplate.app.App;
+import com.govindadasu.androidboilerplate.bo.SignUpResponse;
 import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.constant.Constants;
 
@@ -85,8 +87,19 @@ public class EmailSignUpTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected void onPostExecute(String output) {
-        emailSignInCallback.onSuccess(output);
-        Log.e(App.getTag(), "request output:" + output);
+
+        Log.e(App.getTag(), "Email Sign up Task output:" + output);
+        if(output==null) { emailSignInCallback.onSuccess(output);}
+      SignUpResponse signUpResponse=  new Gson().fromJson(output, SignUpResponse.class);
+
+
+        EmailSignInTask signInTask=new EmailSignInTask();
+        signInTask.setPassword(password);
+        signInTask.setUserName(signUpResponse.getEmail());
+        signInTask.setEmailSignInCallback(emailSignInCallback);
+        signInTask.execute();
+
+
 
 
     }

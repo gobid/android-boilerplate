@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.facebook.login.widget.ProfilePictureView;
 import com.google.gson.Gson;
@@ -75,7 +76,7 @@ public class ChangePasswordActivity extends ActionBarActivity {
             public void onSuccess(String response) {
 
                 Log.d(Constants.DEBUG_KEY, "Change Password Response " + response);
-              //  Toast.makeText(ChangePasswordActivity.this, response.toString(), Toast.LENGTH_SHORT).show();
+              Toast.makeText(ChangePasswordActivity.this, mContext.getString(R.string.msg_password_reset), Toast.LENGTH_SHORT).show();
             }
         });
         changePasswordTask.setAccessTocken(sarverAccessTocken.getAccess_token());

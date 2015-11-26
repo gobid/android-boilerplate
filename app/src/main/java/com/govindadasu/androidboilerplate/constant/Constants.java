@@ -8,7 +8,7 @@ public class Constants {
     public static final String NAMESPACE_PASSWORD_RESET="/djoser-auth/password/reset/";
     public static final String NAMESPACE_PASSWORD_RESET_CONFIRM="/djoser-auth/password/reset/confirm/";
     public static final String NAMESPACE_EMAIL_SIGNUP="/djoser-auth/register/";
-    public static final String NAMESPACE_EMAIL_SIGN_IN="/auth/token";
+    public static final String NAMESPACE_EMAIL_SIGN_IN="/auth/token/";
     public static final String KEY_EMAIL = "email";
     public static final String KEY_USER_ID = "uid";
     public static final String KEY_TOCKEN = "token";

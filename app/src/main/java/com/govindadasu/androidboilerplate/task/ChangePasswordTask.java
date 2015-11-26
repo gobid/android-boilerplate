@@ -91,8 +91,8 @@ public class ChangePasswordTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... params) {
 
-         getOutputFromUrl(getRsetURL(),getRestParameters());
-       return getOutputFromUrl(getConfirmURL(),getConfirmParameters());
+       return  getOutputFromUrl(getRsetURL(),getRestParameters());
+      // return getOutputFromUrl(getConfirmURL(),getConfirmParameters());
     }
 
     @Override

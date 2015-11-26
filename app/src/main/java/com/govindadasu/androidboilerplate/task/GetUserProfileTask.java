@@ -28,12 +28,12 @@ public class GetUserProfileTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... urls) {
 
-        return "{\n" +
-                "    \"email\": \"sabir_alone777@yahoo.com\",\n" +
-                "    \"id\": 64,\n" +
-                "    \"username\": \"sabir_alone777@yahoo.com\"\n" +
-                "}";
-        //return getOutputFromUrl(sarverURL);
+//        return "{\n" +
+//                "    \"email\": \"sabir_alone777@yahoo.com\",\n" +
+//                "    \"id\": 64,\n" +
+//                "    \"username\": \"sabir_alone777@yahoo.com\"\n" +
+//                "}";
+        return getOutputFromUrl(sarverURL);
     }
 
     private String getOutputFromUrl(String url_string) {
@@ -65,7 +65,8 @@ public class GetUserProfileTask extends AsyncTask<String, Void, String> {
             String userCredentials =autheanticationTocken;
 
 
-            httpConnection.setRequestProperty(Constants.KEY_AUTHEATICATION, userCredentials);
+           httpConnection.setRequestProperty("HTTP_AUTHORIZATION ",userCredentials);
+            //httpConnection.addRequestProperty(HttpURLConnection.H,Constants.KEY_AUTHEATICATION+userCredentials);
                 httpConnection.setRequestMethod(Constants.METHOD_GET);
 
             httpConnection.setDoOutput(true);

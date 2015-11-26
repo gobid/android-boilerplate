@@ -45,7 +45,9 @@ import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.google.gson.Gson;
 import com.govindadasu.androidboilerplate.app.App;
+import com.govindadasu.androidboilerplate.bo.SarverAccessTocken;
 import com.govindadasu.androidboilerplate.constant.Constants;
 import com.govindadasu.androidboilerplate.task.EmailSignInTask;
 import com.govindadasu.androidboilerplate.task.EmailSignUpTask;
@@ -197,18 +199,24 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     private void onUserLoggedIn() {
 
+        final SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(mContext);
+       String accesTocken= sharedPreferences.getString(mContext.getString(R.string.key_user_access_tocken), "");
+        if(accesTocken==null){return;}
+        SarverAccessTocken sarverAccessTocken=new Gson().fromJson(accesTocken,SarverAccessTocken.class);
+
         showProgressDialog(R.string.msg_loading);
         GetUserProfileTask getUserProfileTask=new GetUserProfileTask();
+
         getUserProfileTask.setSarverURL(Constants.SARVER_URL_USER_INFO_FROM_TOCKEN);
-        getUserProfileTask.setAutheanticationTocken("Django Qj7uflXr6gatIVmDDrvkJDDEGTErlz");
+        getUserProfileTask.setAutheanticationTocken(" Django " + sarverAccessTocken.getAccess_token());
         getUserProfileTask.setEmailSignInCallback(new ResponseCallBack() {
             @Override
             public void onSuccess(String response) {
 
                 Log.d(Constants.DEBUG_KEY, "Authentation Tocken Response " + response);
-                SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(mContext);
-              SharedPreferences.Editor editor=  sharedPreferences.edit();
-                editor.putString(mContext.getString(R.string.key_user_info_from_tocken),response).commit();
+
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(mContext.getString(R.string.key_user_info_from_tocken), response).commit();
                 hideProgressDialog();
                 startActivity(new Intent(mContext, LandingActivity.class));
                 finish();
@@ -612,8 +620,12 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             signUpTask.setEmailSignInCallback(new ResponseCallBack() {
                 @Override
                 public void onSuccess(String response) {
-                    Log.d(Constants.DEBUG_KEY,"Sign up REspose "+response);
+                    SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(mContext);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(mContext.getString(R.string.key_user_access_tocken),response).commit();
+                    Log.d(Constants.DEBUG_KEY, "Sign up Access Tocken " + response);
                     hideProgressDialog();
+                    onUserLoggedIn();
                 }
             });
             signUpTask.setUserName(email);

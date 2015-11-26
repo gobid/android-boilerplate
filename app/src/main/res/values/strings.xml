@@ -41,6 +41,7 @@
         <string name="firstName">First Name</string>
         <string name="userId">User ID</string>
         <string name="key_user_info_from_tocken">key_user_info_from_tocken</string>
+        <string name="msg_password_reset">Please check your email for a link to confirm the password change.</string>
 
 
     </resources>
