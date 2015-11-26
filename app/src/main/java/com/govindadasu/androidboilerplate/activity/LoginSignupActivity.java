@@ -45,8 +45,12 @@ import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
+import com.google.gson.Gson;
 import com.govindadasu.androidboilerplate.app.App;
+import com.govindadasu.androidboilerplate.bo.SarverAccessTocken;
 import com.govindadasu.androidboilerplate.constant.Constants;
+import com.govindadasu.androidboilerplate.task.EmailSignInTask;
+import com.govindadasu.androidboilerplate.task.EmailSignUpTask;
 import com.govindadasu.androidboilerplate.task.GetUserProfileTask;
 import com.govindadasu.androidboilerplate.task.SignInTask;
 import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
@@ -76,6 +80,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     private EditText edtPassword;
     private boolean isLoggedOut;
     private Context mContext;
+    private String email;
+    private String password;
 
 
     @Override
@@ -193,16 +199,26 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     private void onUserLoggedIn() {
 
+        final SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(mContext);
+       String accesTocken= sharedPreferences.getString(mContext.getString(R.string.key_user_access_tocken), "");
+        if(accesTocken==null){return;}
+        SarverAccessTocken sarverAccessTocken=new Gson().fromJson(accesTocken,SarverAccessTocken.class);
+
         showProgressDialog(R.string.msg_loading);
         GetUserProfileTask getUserProfileTask=new GetUserProfileTask();
+
         getUserProfileTask.setSarverURL(Constants.SARVER_URL_USER_INFO_FROM_TOCKEN);
-        getUserProfileTask.setAutheanticationTocken("Django Qj7uflXr6gatIVmDDrvkJDDEGTErlz");
+        getUserProfileTask.setAutheanticationTocken(" Django " + sarverAccessTocken.getAccess_token());
         getUserProfileTask.setEmailSignInCallback(new ResponseCallBack() {
             @Override
             public void onSuccess(String response) {
 
                 Log.d(Constants.DEBUG_KEY, "Authentation Tocken Response " + response);
+<<<<<<< HEAD
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+=======
+
+>>>>>>> ab1ddc72a5765ee60fff776dcc46393ebea23aef
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(mContext.getString(R.string.key_user_info_from_tocken), response).commit();
                 hideProgressDialog();
@@ -341,15 +357,15 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
 
-    private void attemptLogin() {
-
+    private boolean validateInputFields()
+    {
         // Reset errors.
         edtEmail.setError(null);
         edtPassword.setError(null);
 
         // Store values at the time of the login attempt.
-        String email = edtEmail.getText().toString();
-        String password = edtPassword.getText().toString();
+         email = edtEmail.getText().toString();
+         password = edtPassword.getText().toString();
 
 
         boolean cancel = false;
@@ -373,43 +389,28 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             cancel = true;
         }
 
-        if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
-            focusView.requestFocus();
-        } else {
+        if(cancel) {focusView.requestFocus();}
+        return !cancel;
+    }
+    private void attemptLogin() {
+
+
+        if (validateInputFields()) {
+
             showProgressDialog(R.string.msg_sigining_in);
 
-            final SignInTask emailSiginInTask = new SignInTask();
-            emailSiginInTask.parameters =
-                    "grant_type=password&" +
-                            "client_id="+Constants.CLIENT_ID+"&" +
-                            "client_secret="+Constants.CLIENT_SECRIT+"&" +
-                            "username=" + email +
-                            "&password=" + password;
-
-            emailSiginInTask.setEmailSignInCallback(new ResponseCallBack() {
+            EmailSignInTask emailSignInTask=new EmailSignInTask();
+            emailSignInTask.setPassword(password);
+            emailSignInTask.setUserName(email);
+            emailSignInTask.setEmailSignInCallback(new ResponseCallBack() {
                 @Override
                 public void onSuccess(String response) {
 
-                    if (response == null) {
-                        showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login);
-                        return;
-                    }
-                    if (response.toString().contains("username") && response.toString().contains("email")) {
-
-                        Intent intent = new Intent(getBaseContext(), LandingActivity.class);
-                        intent.putExtra(App.profileInfoText, response);
-                        startActivity(intent);
-                    } else {
-                        showAlertDialog(R.string.title_alert, response);
-                    }
+                    Log.d(Constants.DEBUG_KEY, "Login with email response " + response);
+                    hideProgressDialog();
                 }
-
             });
-
-            emailSiginInTask.execute(R.string.rest_api_url + "/auth/token");
-
+            emailSignInTask.execute();
         }
     }
 
@@ -623,7 +624,29 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
 
     public void gotoRegistration(View v){
-        Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();
+
+        if(validateInputFields())
+
+        {
+            showProgressDialog(R.string.msg_loading);
+            EmailSignUpTask signUpTask=new EmailSignUpTask();
+            signUpTask.setEmailSignInCallback(new ResponseCallBack() {
+                @Override
+                public void onSuccess(String response) {
+                    SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(mContext);
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putString(mContext.getString(R.string.key_user_access_tocken),response).commit();
+                    Log.d(Constants.DEBUG_KEY, "Sign up Access Tocken " + response);
+                    hideProgressDialog();
+                    onUserLoggedIn();
+                }
+            });
+            signUpTask.setUserName(email);
+            signUpTask.setPassword(password);
+            signUpTask.execute();
+        }
+
+       else { Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();}
     }
 
     private String getFBTockenLoginParameters(String fbTocken)
