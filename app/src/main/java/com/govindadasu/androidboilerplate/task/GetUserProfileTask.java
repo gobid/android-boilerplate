@@ -15,9 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-/**
- * Created by Ali on 11/26/2015.
- */
+
 public class GetUserProfileTask extends AsyncTask<String, Void, String> {
 
     public String parameters="";

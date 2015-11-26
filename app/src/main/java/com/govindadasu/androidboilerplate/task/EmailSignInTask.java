@@ -16,9 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-/**
- * Created by Ali on 11/26/2015.
- */
+
 public class EmailSignInTask extends AsyncTask<String, Void, String> {
 
 

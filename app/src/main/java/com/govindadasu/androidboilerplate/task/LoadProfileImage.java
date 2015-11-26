@@ -33,7 +33,8 @@ public class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
     }
 
     protected void onPostExecute(Bitmap result) {
+        if(bmImage!=null){
         bmImage.setImageBitmap(result);
         bmImage.setVisibility(View.VISIBLE);
-    }
+    }}
 }
