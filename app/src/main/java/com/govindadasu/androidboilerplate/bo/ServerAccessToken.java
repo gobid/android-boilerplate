@@ -1,6 +1,6 @@
 package com.govindadasu.androidboilerplate.bo;
 
-public class SarverAccessTocken {
+public class ServerAccessToken {
 
     private String access_token;
     private String token_type;

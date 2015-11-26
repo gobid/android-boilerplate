@@ -19,15 +19,15 @@ import java.net.URLConnection;
 /**
  *   on 11/26/2015.
  */
-public class ChangePasswordTask extends AsyncTask<String, Void, String> {
+public class ResetPassword extends AsyncTask<String, Void, String> {
 
     int responseCode = -1;
     private ResponseCallBack responseListener;
 
     private String userEmail;
-    private String userId;
-    private String accessTocken;
-    private String newPassword;
+//    private String userId;
+//    private String accessToken;
+//    private String newPassword;
 
 
     private String getOutputFromUrl(String url_string,String parameters) {
@@ -51,7 +51,7 @@ public class ChangePasswordTask extends AsyncTask<String, Void, String> {
     private InputStream getHttpConnection(URL url,String parameters)
             throws IOException {
         InputStream stream = null;
-        Log.d(Constants.DEBUG_KEY, "Sarver url " + url.toString());
+        Log.d(Constants.DEBUG_KEY, "Server url " + url.toString());
         URLConnection connection = url.openConnection();
 
         try {
@@ -72,6 +72,7 @@ public class ChangePasswordTask extends AsyncTask<String, Void, String> {
                 Log.e(App.getTag(), "HTTP_OK");
                 stream = httpConnection.getInputStream();
                 responseCode = httpConnection.getResponseCode();
+
             }
 
             writer.close();
@@ -114,23 +115,23 @@ public class ChangePasswordTask extends AsyncTask<String, Void, String> {
         return Constants.KEY_EMAIL+"="+userEmail;
     }
 
-    public String getConfirmParameters() {
-        return Constants.KEY_USER_ID+"="+userId+"&"+Constants.KEY_TOCKEN+"="+accessTocken+"&"+Constants.KEY_NEW_PASSWORD+"="+newPassword;
-    }
+//    public String getConfirmParameters() {
+//        return Constants.KEY_USER_ID+"="+userId+"&"+Constants.KEY_TOCKEN+"="+accessTocken+"&"+Constants.KEY_NEW_PASSWORD+"="+newPassword;
+//    }
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public void setAccessTocken(String accessTocken) {
-        this.accessTocken = accessTocken;
-    }
-
-    public void setNewPassword(String newPassword) {
-        this.newPassword = newPassword;
-    }
+//
+//    public void setUserId(String userId) {
+//        this.userId = userId;
+//    }
+//
+//    public void setAccessTocken(String accessTocken) {
+//        this.accessTocken = accessTocken;
+//    }
+//
+//    public void setNewPassword(String newPassword) {
+//        this.newPassword = newPassword;
+//    }
 }

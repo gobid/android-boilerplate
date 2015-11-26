@@ -47,7 +47,7 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
 import com.govindadasu.androidboilerplate.app.App;
-import com.govindadasu.androidboilerplate.bo.SarverAccessTocken;
+import com.govindadasu.androidboilerplate.bo.ServerAccessToken;
 import com.govindadasu.androidboilerplate.constant.Constants;
 import com.govindadasu.androidboilerplate.task.EmailSignInTask;
 import com.govindadasu.androidboilerplate.task.EmailSignUpTask;
@@ -199,21 +199,27 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     private void onUserLoggedIn() {
 
+        if(true){
+            startActivity(new Intent(mContext, LandingActivity.class));
+            finish();
+            return;
+        }
+
         final SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(mContext);
-       String accesTocken= sharedPreferences.getString(mContext.getString(R.string.key_user_access_tocken), "");
-        if(accesTocken==null){return;}
-        SarverAccessTocken sarverAccessTocken=new Gson().fromJson(accesTocken,SarverAccessTocken.class);
+        String accessToken= sharedPreferences.getString(mContext.getString(R.string.key_user_access_tocken), "");
+        if(accessToken==null){return;}
+        ServerAccessToken salverAccessToken=new Gson().fromJson(accessToken,ServerAccessToken.class);
 
         showProgressDialog(R.string.msg_loading);
         GetUserProfileTask getUserProfileTask=new GetUserProfileTask();
 
         getUserProfileTask.setSarverURL(Constants.SARVER_URL_USER_INFO_FROM_TOCKEN);
-        getUserProfileTask.setAutheanticationTocken(" Django " + sarverAccessTocken.getAccess_token());
+        getUserProfileTask.setAutheanticationTocken(" Django " + salverAccessToken.getAccess_token());
         getUserProfileTask.setEmailSignInCallback(new ResponseCallBack() {
             @Override
             public void onSuccess(String response) {
 
-                Log.d(Constants.DEBUG_KEY, "Authentation Tocken Response " + response);
+                Log.d(Constants.DEBUG_KEY, "Authentication Token Response " + response);
 
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
 
@@ -512,7 +518,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
             } else {
                 Toast.makeText(getApplicationContext(),
-                        "Person information can not be retrived", Toast.LENGTH_LONG).show();
+                        "Person information can not be retrieved", Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -577,7 +583,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                                     + user.getUserId() + "/picture?type=large");
                             User.setLoggedInUser(user);
 
-                            signInFBTocken();
+                            signInFBToken();
 
                         }
                     }
@@ -589,13 +595,13 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         request.executeAsync();
     }
 
-    private void signInFBTocken() {
+    private void signInFBToken() {
 
-        String accessTocken= User.getLoggedInUser().getAccessToken();
+        String accessToken= User.getLoggedInUser().getAccessToken();
         SignInTask signInTask=new SignInTask();
         signInTask.setSarverURL(Constants.SARVER_URL);
         signInTask.setAPIString(Constants.API_EXCHANGE_FB_TOCKEN);
-        signInTask.parameters=getFBTockenLoginParameters(accessTocken);
+        signInTask.parameters=getFBTockenLoginParameters(accessToken);
 
         signInTask.execute();
         signInTask.setEmailSignInCallback(new ResponseCallBack() {
@@ -603,16 +609,16 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             public void onSuccess(String response) {
 
                 if (response != null) {
-                    Log.d(Constants.DEBUG_KEY, "GEt Sarver Tocken Against FB Tocken " + response.toString());
+                    Log.d(Constants.DEBUG_KEY, "GEt Server Token Against FB Token" + response.toString());
                 } else {
-                    Log.d(Constants.DEBUG_KEY, "GEt Sarver Tocken Against FB Tocken  NULL");
+                    Log.d(Constants.DEBUG_KEY, "GEt Server Token Against FB Token  NULL");
                 }
 
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginSignupActivity.this);
                 SharedPreferences.Editor editor = preferences.edit();
 
                 editor.putString(mContext.getString(R.string.key_user_access_tocken), response).commit();
-              //  Log.d(Constants.DEBUG_KEY, "Access Tocken " + accessTocken);
+
                 hideProgressDialog();
                 onUserLoggedIn();
             }
@@ -634,7 +640,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                     SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(mContext);
                     SharedPreferences.Editor editor = preferences.edit();
                     editor.putString(mContext.getString(R.string.key_user_access_tocken),response).commit();
-                    Log.d(Constants.DEBUG_KEY, "Sign up Access Tocken " + response);
+                    Log.d(Constants.DEBUG_KEY, "Sign up Access Token " + response);
                     hideProgressDialog();
                     onUserLoggedIn();
                 }

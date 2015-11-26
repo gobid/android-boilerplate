@@ -6,7 +6,7 @@ package com.govindadasu.androidboilerplate.bo;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserProfileInfoAgaistTocken {
+public class UserProfileInfoAgainstToken {
 
 
     private String email;
