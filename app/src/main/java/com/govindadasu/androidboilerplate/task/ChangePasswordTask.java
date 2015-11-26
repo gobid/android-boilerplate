@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.govindadasu.androidboilerplate.app.App;
-import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
+import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.constant.Constants;
 
 import java.io.BufferedReader;
@@ -20,20 +20,21 @@ import java.net.URLConnection;
  *   on 11/26/2015.
  */
 public class ChangePasswordTask extends AsyncTask<String, Void, String> {
-    public String parameters="";
-    private String sarverURL="";
+
     int responseCode = -1;
-    private EmailSignInCallback emailSignInCallback;
+    private ResponseCallBack responseListener;
 
-    private String autheanticationTocken=null;
+    private String userEmail;
+    private String userId;
+    private String accessTocken;
+    private String newPassword;
 
 
-
-    private String getOutputFromUrl(String url_string) {
+    private String getOutputFromUrl(String url_string,String parameters) {
 
         StringBuffer output = new StringBuffer("");
         try {
-            InputStream stream = getHttpConnection(new URL(url_string));
+            InputStream stream = getHttpConnection(new URL(url_string),parameters);
             if(stream==null) return null;
             BufferedReader buffer = new BufferedReader(
                     new InputStreamReader(stream));
@@ -47,7 +48,7 @@ public class ChangePasswordTask extends AsyncTask<String, Void, String> {
     }
 
     // Makes HttpURLConnection and returns InputStream
-    private InputStream getHttpConnection(URL url)
+    private InputStream getHttpConnection(URL url,String parameters)
             throws IOException {
         InputStream stream = null;
         Log.d(Constants.DEBUG_KEY, "Sarver url " + url.toString());
@@ -83,38 +84,53 @@ public class ChangePasswordTask extends AsyncTask<String, Void, String> {
 
 
 
-    public void setEmailSignInCallback(EmailSignInCallback emailSignInCallback) {
-        this.emailSignInCallback = emailSignInCallback;
+    public void setResponseListener(ResponseCallBack responseListener) {
+        this.responseListener = responseListener;
     }
-
-    public String getSarverURL() {
-        return sarverURL;
-    }
-
-    public void setSarverURL(String sarverURL) {
-        this.sarverURL = sarverURL;
-    }
-
-    public void setAPIString(String apiURL) {
-
-        sarverURL+="/"+apiURL;
-    }
-
-    public void setAutheanticationTocken(String autheanticationTocken) {
-        this.autheanticationTocken = autheanticationTocken;
-    }
-
-
 
     @Override
     protected String doInBackground(String... params) {
-        return getOutputFromUrl(sarverURL);
+
+         getOutputFromUrl(getRsetURL(),getRestParameters());
+       return getOutputFromUrl(getConfirmURL(),getConfirmParameters());
     }
 
     @Override
     protected void onPostExecute(String output) {
 
-        emailSignInCallback.onSuccess(output);
+        responseListener.onSuccess(output);
         Log.e(App.getTag(), "request output:" + output);
+    }
+
+    public String getRsetURL() {
+        return Constants.BASE_SARVER_URL+Constants.NAMESPACE_PASSWORD_RESET;
+    }
+
+    public String getConfirmURL() {
+        return Constants.SARVER_URL + Constants.NAMESPACE_PASSWORD_RESET_CONFIRM;
+    }
+
+    public String getRestParameters() {
+        return Constants.KEY_EMAIL+"="+userEmail;
+    }
+
+    public String getConfirmParameters() {
+        return Constants.KEY_USER_ID+"="+userId+"&"+Constants.KEY_TOCKEN+"="+accessTocken+"&"+Constants.KEY_NEW_PASSWORD+"="+newPassword;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setAccessTocken(String accessTocken) {
+        this.accessTocken = accessTocken;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
     }
 }

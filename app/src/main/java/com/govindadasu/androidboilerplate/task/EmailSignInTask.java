@@ -3,8 +3,8 @@ package com.govindadasu.androidboilerplate.task;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.app.App;
+import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.constant.Constants;
 
 import java.io.BufferedReader;
@@ -17,19 +17,18 @@ import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * Created by abhishekgarg on 11/17/15.
+ * Created by Ali on 11/26/2015.
  */
-public class SignInTask extends AsyncTask<String, Void, String> {
-    public String parameters="";
-    private String sarverURL="";
+public class EmailSignInTask extends AsyncTask<String, Void, String> {
+
+
     int responseCode = -1;
     private ResponseCallBack emailSignInCallback;
 
-    private String autheanticationTocken=null;
-
     @Override
     protected String doInBackground(String... urls) {
-        return getOutputFromUrl(sarverURL);
+
+        return getOutputFromUrl(getSarverURL());
     }
 
     private String getOutputFromUrl(String url_string) {
@@ -49,29 +48,23 @@ public class SignInTask extends AsyncTask<String, Void, String> {
         return output.toString();
     }
 
-    // Makes HttpURLConnection and returns InputStream
+
     private InputStream getHttpConnection(URL url)
             throws IOException {
         InputStream stream = null;
-        Log.d(Constants.DEBUG_KEY,"Sarver url "+url.toString());
+        Log.d(Constants.DEBUG_KEY, "Sarver url " + url.toString());
         URLConnection connection = url.openConnection();
 
         try {
             HttpURLConnection httpConnection = (HttpURLConnection) connection;
-            if(autheanticationTocken!=null)
-            { httpConnection.setRequestProperty("Authorization", autheanticationTocken);
-                httpConnection.setRequestMethod("GET");
-            }
-            else
-            { httpConnection.setRequestMethod("POST");}
 
+            httpConnection.setRequestMethod("POST");
             httpConnection.setDoOutput(true);
             httpConnection.connect();
-            //post
 
             OutputStreamWriter writer = new OutputStreamWriter(httpConnection.getOutputStream());
-            String urlParameters = parameters;
-            Log.d(Constants.DEBUG_KEY,"parameters : "+parameters);
+            String urlParameters = getParameters();
+            Log.d(Constants.DEBUG_KEY,"parameters : "+urlParameters);
             Log.e(App.getTag(), urlParameters);
             writer.write(urlParameters);
             writer.flush();
@@ -81,10 +74,7 @@ public class SignInTask extends AsyncTask<String, Void, String> {
                 stream = httpConnection.getInputStream();
                 responseCode = httpConnection.getResponseCode();
             }
-//            else{final_output="Already Registered";
-//                Log.e(App.getTag(), "couldn't connect code: " + httpConnection.getResponseCode());
-//                Log.d(Constents.DEBUG_KEY, "couldn't connect code: " + httpConnection.getResponseCode());
-//            }
+
             writer.close();
         } catch (Exception ex) {
             Log.d(Constants.DEBUG_KEY,ex.getMessage());
@@ -106,19 +96,16 @@ public class SignInTask extends AsyncTask<String, Void, String> {
     }
 
     public String getSarverURL() {
-        return sarverURL;
+        return  Constants.BASE_SARVER_URL+Constants.NAMESPACE_EMAIL_SIGN_IN ;
     }
 
-    public void setSarverURL(String sarverURL) {
-        this.sarverURL = sarverURL;
-    }
 
-    public void setAPIString(String apiURL) {
 
-        sarverURL+="/"+apiURL;
-    }
 
-    public void setAutheanticationTocken(String autheanticationTocken) {
-        this.autheanticationTocken = autheanticationTocken;
+
+
+
+    public String getParameters() {
+        return "";
     }
 }

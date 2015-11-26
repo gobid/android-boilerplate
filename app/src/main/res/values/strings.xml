@@ -36,6 +36,7 @@
         <string name="change_password">Change Password</string>
         <string name="txtFirstName">First Name</string>
     <string name="title_activity_landing">LandingActivity</string>
+        <string name="key_user_info_from_tocken">key_user_info_from_tocken</string>
 
 
     </resources>

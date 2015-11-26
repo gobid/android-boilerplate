@@ -37,6 +37,7 @@ public class ProfileActivity extends Activity {
         txtLastName= (TextView) findViewById(R.id.txtLastName);
         txtGender= (TextView) findViewById(R.id.txtGender);
         txtUserId= (TextView) findViewById(R.id.txtUserId);
+
         User crruntLoginUser= User.getLoggedInUser();
 
         txtEmail.setText(crruntLoginUser.getEmail());

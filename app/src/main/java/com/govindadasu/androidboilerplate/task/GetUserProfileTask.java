@@ -3,23 +3,23 @@ package com.govindadasu.androidboilerplate.task;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.app.App;
+import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.constant.Constants;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
 /**
- * Created by abhishekgarg on 11/17/15.
+ * Created by Ali on 11/26/2015.
  */
-public class SignInTask extends AsyncTask<String, Void, String> {
+public class GetUserProfileTask extends AsyncTask<String, Void, String> {
+
     public String parameters="";
     private String sarverURL="";
     int responseCode = -1;
@@ -29,7 +29,13 @@ public class SignInTask extends AsyncTask<String, Void, String> {
 
     @Override
     protected String doInBackground(String... urls) {
-        return getOutputFromUrl(sarverURL);
+
+        return "{\n" +
+                "    \"email\": \"sabir_alone777@yahoo.com\",\n" +
+                "    \"id\": 64,\n" +
+                "    \"username\": \"sabir_alone777@yahoo.com\"\n" +
+                "}";
+        //return getOutputFromUrl(sarverURL);
     }
 
     private String getOutputFromUrl(String url_string) {
@@ -53,39 +59,29 @@ public class SignInTask extends AsyncTask<String, Void, String> {
     private InputStream getHttpConnection(URL url)
             throws IOException {
         InputStream stream = null;
-        Log.d(Constants.DEBUG_KEY,"Sarver url "+url.toString());
+        Log.d(Constants.DEBUG_KEY, "Sarver url " + url.toString());
         URLConnection connection = url.openConnection();
 
         try {
             HttpURLConnection httpConnection = (HttpURLConnection) connection;
-            if(autheanticationTocken!=null)
-            { httpConnection.setRequestProperty("Authorization", autheanticationTocken);
-                httpConnection.setRequestMethod("GET");
-            }
-            else
-            { httpConnection.setRequestMethod("POST");}
+            String userCredentials =autheanticationTocken;
+
+
+            httpConnection.setRequestProperty(Constants.KEY_AUTHEATICATION, userCredentials);
+                httpConnection.setRequestMethod(Constants.METHOD_GET);
 
             httpConnection.setDoOutput(true);
+            httpConnection.setDoInput(true);
             httpConnection.connect();
-            //post
 
-            OutputStreamWriter writer = new OutputStreamWriter(httpConnection.getOutputStream());
-            String urlParameters = parameters;
-            Log.d(Constants.DEBUG_KEY,"parameters : "+parameters);
-            Log.e(App.getTag(), urlParameters);
-            writer.write(urlParameters);
-            writer.flush();
 
             if (httpConnection.getResponseCode() == HttpURLConnection.HTTP_OK || httpConnection.getResponseCode() == HttpURLConnection.HTTP_CREATED || httpConnection.getResponseCode() == HttpURLConnection.HTTP_ACCEPTED) {
                 Log.e(App.getTag(), "HTTP_OK");
                 stream = httpConnection.getInputStream();
                 responseCode = httpConnection.getResponseCode();
             }
-//            else{final_output="Already Registered";
-//                Log.e(App.getTag(), "couldn't connect code: " + httpConnection.getResponseCode());
-//                Log.d(Constents.DEBUG_KEY, "couldn't connect code: " + httpConnection.getResponseCode());
-//            }
-            writer.close();
+
+          //  writer.close();
         } catch (Exception ex) {
             Log.d(Constants.DEBUG_KEY,ex.getMessage());
             ex.printStackTrace();

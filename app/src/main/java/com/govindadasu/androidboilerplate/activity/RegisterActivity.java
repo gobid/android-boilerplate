@@ -31,7 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.govindadasu.androidboilerplate.task.SignInTask;
-import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
+import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.constant.Constants;
 
@@ -43,7 +43,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,EmailSignInCallback {
+public class RegisterActivity extends AppCompatActivity implements LoaderCallbacks<Cursor>,ResponseCallBack {
 
     /**
      * Id to identity READ_CONTACTS permission request.

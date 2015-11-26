@@ -46,10 +46,10 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.govindadasu.androidboilerplate.app.App;
-import com.govindadasu.androidboilerplate.bo.SarverAccessTocken;
 import com.govindadasu.androidboilerplate.constant.Constants;
+import com.govindadasu.androidboilerplate.task.GetUserProfileTask;
 import com.govindadasu.androidboilerplate.task.SignInTask;
-import com.govindadasu.androidboilerplate.callback.EmailSignInCallback;
+import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.bo.User;
 import com.govindadasu.androidboilerplate.util.Utils;
@@ -194,18 +194,23 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     private void onUserLoggedIn() {
 
         showProgressDialog(R.string.msg_loading);
-        SignInTask signInTask=new SignInTask();
-        signInTask.setSarverURL("http://apitodo.flipbitsolutions.com/djoser-auth/me/");
-        signInTask.setAutheanticationTocken("Django Qj7uflXr6gatIVmDDrvkJDDEGTErlz");
-        signInTask.setEmailSignInCallback(new EmailSignInCallback() {
+        GetUserProfileTask getUserProfileTask=new GetUserProfileTask();
+        getUserProfileTask.setSarverURL(Constants.SARVER_URL_USER_INFO_FROM_TOCKEN);
+        getUserProfileTask.setAutheanticationTocken("Django Qj7uflXr6gatIVmDDrvkJDDEGTErlz");
+        getUserProfileTask.setEmailSignInCallback(new ResponseCallBack() {
             @Override
             public void onSuccess(String response) {
-                Log.d(Constants.DEBUG_KEY,"Authentation Tocken Response "+response.toString());
+
+                Log.d(Constants.DEBUG_KEY, "Authentation Tocken Response " + response);
+                SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(mContext);
+              SharedPreferences.Editor editor=  sharedPreferences.edit();
+                editor.putString(mContext.getString(R.string.key_user_info_from_tocken),response).commit();
                 hideProgressDialog();
                 startActivity(new Intent(mContext, LandingActivity.class));
                 finish();
             }
         });
+        getUserProfileTask.execute();
 
     }
 
@@ -381,7 +386,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                             "username=" + email +
                             "&password=" + password;
 
-            emailSiginInTask.setEmailSignInCallback(new EmailSignInCallback() {
+            emailSiginInTask.setEmailSignInCallback(new ResponseCallBack() {
                 @Override
                 public void onSuccess(String response) {
 
@@ -490,7 +495,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
                 User user = new User();
                 user.setUserId(currentPerson.getId());
-                //user.setAccessToken();
+                //user.setAccess_token();
                 user.setFirstName(currentPerson.getDisplayName());
                 user.setEmail(Plus.AccountApi.getAccountName(getPlusClient()));
                 user.setProfilePictureUrl(currentPerson.getImage().getUrl());
@@ -585,27 +590,26 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         signInTask.parameters=getFBTockenLoginParameters(accessTocken);
 
         signInTask.execute();
-        signInTask.setEmailSignInCallback(new EmailSignInCallback() {
+        signInTask.setEmailSignInCallback(new ResponseCallBack() {
             @Override
             public void onSuccess(String response) {
 
-                if(response!=null)
-                {
-                    Log.d(Constants.DEBUG_KEY,"GEt Sarver Tocken Against FB Tocken "+response.toString());
-                }
-                else {
-                    Log.d(Constants.DEBUG_KEY,"GEt Sarver Tocken Against FB Tocken  NULL");
+                if (response != null) {
+                    Log.d(Constants.DEBUG_KEY, "GEt Sarver Tocken Against FB Tocken " + response.toString());
+                } else {
+                    Log.d(Constants.DEBUG_KEY, "GEt Sarver Tocken Against FB Tocken  NULL");
                 }
 
-                SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(LoginSignupActivity.this);
-                SharedPreferences.Editor editor=preferences.edit();
-                editor.putString(mContext.getString(R.string.key_user_access_tocken),response).commit();
+                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginSignupActivity.this);
+                SharedPreferences.Editor editor = preferences.edit();
 
+                editor.putString(mContext.getString(R.string.key_user_access_tocken), response).commit();
+              //  Log.d(Constants.DEBUG_KEY, "Access Tocken " + accessTocken);
+                hideProgressDialog();
+                onUserLoggedIn();
             }
         });
-        Log.d(Constants.DEBUG_KEY, "Access Tocken " + accessTocken);
-        hideProgressDialog();
-        onUserLoggedIn();
+
     }
 
 
