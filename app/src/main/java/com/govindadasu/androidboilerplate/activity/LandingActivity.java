@@ -29,7 +29,7 @@ public class LandingActivity extends Activity {
     public void viewProfile(View v)
     {
         if(User.getLoggedInUser()==null){
-            Toast.makeText(this,"Disabled due to activation issue",Toast.LENGTH_LONG);
+            Toast.makeText(this,"Disabled due to activation issue",Toast.LENGTH_LONG).show();
             return;
         }
         Intent intent=new Intent(LandingActivity.this,ProfileActivity.class);
@@ -45,7 +45,7 @@ public class LandingActivity extends Activity {
 //        ServerAccessToken serverAccessToken = gson.fromJson(serverAccessTokenStr, ServerAccessToken.class);
 
         if(User.getLoggedInUser()==null){
-            Toast.makeText(this,"Disabled due to activation issue",Toast.LENGTH_LONG);
+            Toast.makeText(this,"Disabled due to activation issue",Toast.LENGTH_LONG).show();
             return;
         }
         ResetPassword resetPasswordTask=new ResetPassword();
