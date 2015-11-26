@@ -17,7 +17,7 @@ import com.govindadasu.androidboilerplate.bo.SarverAccessTocken;
 import com.govindadasu.androidboilerplate.bo.User;
 import com.govindadasu.androidboilerplate.task.LoadProfileImage;
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +47,7 @@ public class ProfileActivity extends AppCompatActivity {
         txtLastName.setText(crruntLoginUser.getLastName());
         txtUserId.setText(crruntLoginUser.getUserId());
 
-        if(User.getLoggedInUser().getLoginType()==User.LOGIN_TYPE_FACEBOOK){
-            ProfilePictureView pv = (ProfilePictureView) findViewById(R.id.fb_profile_pic_view);
-            pv.setVisibility(View.VISIBLE);
-            pv.setProfileId(User.getLoggedInUser().getUserId());
-        } else if(User.getLoggedInUser().getLoginType()==User.LOGIN_TYPE_GOOGLE){
-            ImageView pv = (ImageView) findViewById(R.id.google_profile_pic);
-            new LoadProfileImage(pv).execute(User.getLoggedInUser().getProfilePictureUrl());
-        }
+
     }
 
 }

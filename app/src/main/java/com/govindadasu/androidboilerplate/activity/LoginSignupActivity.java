@@ -202,9 +202,9 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             public void onSuccess(String response) {
 
                 Log.d(Constants.DEBUG_KEY, "Authentation Tocken Response " + response);
-                SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(mContext);
-              SharedPreferences.Editor editor=  sharedPreferences.edit();
-                editor.putString(mContext.getString(R.string.key_user_info_from_tocken),response).commit();
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(mContext.getString(R.string.key_user_info_from_tocken), response).commit();
                 hideProgressDialog();
                 startActivity(new Intent(mContext, LandingActivity.class));
                 finish();
@@ -227,11 +227,13 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
     private void showProgressDialog(int messageResource) {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getString(messageResource));
-        progressDialog.setIndeterminate(true);
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        try {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(messageResource));
+            progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+        }catch (Exception e){}
     }
 
     private void hideProgressDialog() {
@@ -496,7 +498,12 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                 User user = new User();
                 user.setUserId(currentPerson.getId());
                 //user.setAccess_token();
-                user.setFirstName(currentPerson.getDisplayName());
+
+                //String name = currentPerson.getDisplayName();
+
+                user.setGender(currentPerson.getGender()== Person.Gender.MALE?"Male":currentPerson.getGender()==Person.Gender.FEMALE?"Female":"Other");
+                user.setFirstName(currentPerson.getName().getGivenName());
+                user.setLastName(currentPerson.getName().getFamilyName());
                 user.setEmail(Plus.AccountApi.getAccountName(getPlusClient()));
                 user.setProfilePictureUrl(currentPerson.getImage().getUrl());
                 user.setLoginType(User.LOGIN_TYPE_GOOGLE);
@@ -506,7 +513,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
             } else {
                 Toast.makeText(getApplicationContext(),
-                        "Person information is null", Toast.LENGTH_LONG).show();
+                        "Person information can not be retrived", Toast.LENGTH_LONG).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -567,6 +574,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                             user.setAccessToken(AccessToken.getCurrentAccessToken().getToken());
                             user.setUserId(AccessToken.getCurrentAccessToken().getUserId());
                             user.setLoginType(User.LOGIN_TYPE_FACEBOOK);
+                            user.setProfilePictureUrl("https://graph.facebook.com/"
+                                    + user.getUserId() + "/picture?type=large");
                             User.setLoggedInUser(user);
 
                             signInFBTocken();

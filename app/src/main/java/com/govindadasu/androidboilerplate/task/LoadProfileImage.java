@@ -20,10 +20,10 @@ public class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
     }
 
     protected Bitmap doInBackground(String... urls) {
-        String urldisplay = urls[0];
+        String pictureUrl = urls[0];
         Bitmap mIcon11 = null;
         try {
-            InputStream in = new java.net.URL(urldisplay).openStream();
+            InputStream in = new java.net.URL(pictureUrl).openStream();
             mIcon11 = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
             Log.e("Error", e.getMessage());
@@ -33,7 +33,7 @@ public class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
     }
 
     protected void onPostExecute(Bitmap result) {
-        if(bmImage!=null){
+        if(bmImage!=null && result!=null){
         bmImage.setImageBitmap(result);
         bmImage.setVisibility(View.VISIBLE);
     }}
