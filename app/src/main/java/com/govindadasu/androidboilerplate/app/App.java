@@ -1,6 +1,7 @@
 package com.govindadasu.androidboilerplate.app;
 
 import android.app.Application;
+import android.content.ContextWrapper;
 import android.util.Log;
 
 import com.facebook.AccessToken;
@@ -12,9 +13,8 @@ import com.facebook.Profile;
 import com.facebook.ProfileTracker;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-/**
- * Created by abhishekgarg on 10/23/15.
- */
+import com.govindadasu.androidboilerplate.util.Prefs;
+
 public class App extends Application{
     private LoginButton loginButton;
     protected static CallbackManager mCallbackManager;
@@ -26,32 +26,14 @@ public class App extends Application{
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
+        new Prefs.Builder()
+                .setContext(this)
+                .setMode(ContextWrapper.MODE_PRIVATE)
+                .setPrefsName(getPackageName())
+                .setUseDefaultSharedPreference(true)
+                .build();
     }
 
-    protected static FacebookCallback<LoginResult> mCallback = new FacebookCallback<LoginResult>() {
-        @Override
-        public void onSuccess(LoginResult loginResult) {
-            AccessToken accessToken = loginResult.getAccessToken();
-            mProfileTracker = new ProfileTracker() {
-                @Override
-                protected void onCurrentProfileChanged(Profile profile, Profile profile2) {
-                    Log.i(getTag(),"facebook - profile" + profile2.getFirstName());
-                    mProfileTracker.stopTracking();
-                }
-            };
-            mProfileTracker.startTracking();
-        }
-
-        @Override
-        public void onCancel() {
-
-        }
-
-        @Override
-        public void onError(FacebookException e) {
-
-        }
-    };
     public static String getTag() {
         String tag = "SimpleAndroid";
         final StackTraceElement[] ste = Thread.currentThread().getStackTrace();

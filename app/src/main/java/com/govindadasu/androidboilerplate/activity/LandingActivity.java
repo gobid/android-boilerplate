@@ -29,7 +29,7 @@ public class LandingActivity extends Activity {
     public void viewProfile(View v)
     {
         if(User.getLoggedInUser()==null){
-            Toast.makeText(this,"Disabled due to activation issue",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"You are not logged in.",Toast.LENGTH_LONG).show();
             return;
         }
         Intent intent=new Intent(LandingActivity.this,ProfileActivity.class);
@@ -44,20 +44,20 @@ public class LandingActivity extends Activity {
 //        ServerAccessToken serverAccessToken = gson.fromJson(serverAccessTokenStr, ServerAccessToken.class);
 
         if(User.getLoggedInUser()==null){
-            Toast.makeText(this,"Disabled due to activation issue",Toast.LENGTH_LONG).show();
+            Toast.makeText(this,"You are not logged in.",Toast.LENGTH_LONG).show();
             return;
         }
-        ResetPassword resetPasswordTask=new ResetPassword();
-        resetPasswordTask.setResponseListener(new ResponseCallBack() {
-            @Override
-            public void onSuccess(String response) {
-
-                Log.d(Constants.DEBUG_KEY, "Change Password Response " + response);
-                Toast.makeText(LandingActivity.this, LandingActivity.this.getString(R.string.msg_password_reset), Toast.LENGTH_SHORT).show();
-            }
-        });
-        resetPasswordTask.setUserEmail(User.getLoggedInUser().getEmail());
-        resetPasswordTask.execute();
+//        ResetPassword resetPasswordTask=new ResetPassword();
+//        resetPasswordTask.setResponseListener(new ResponseCallBack() {
+//            @Override
+//            public void onSuccess(String response) {
+//
+//                Log.d(Constants.DEBUG_KEY, "Change Password Response " + response);
+//                Toast.makeText(LandingActivity.this, LandingActivity.this.getString(R.string.msg_password_reset), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        resetPasswordTask.setUserEmail(User.getLoggedInUser().getEmail());
+//        resetPasswordTask.execute();
 
     }
 
@@ -68,4 +68,8 @@ public class LandingActivity extends Activity {
         finish();
     }
 
+    public void otherMenuClicked(View view) {
+        Toast.makeText(LandingActivity.this, LandingActivity.this.getString(R.string.msg_other_menu), Toast.LENGTH_SHORT).show();
+
+    }
 }

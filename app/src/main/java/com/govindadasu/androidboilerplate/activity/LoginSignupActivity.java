@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -25,6 +26,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -42,24 +44,31 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.auth.GoogleAuthException;
+import com.google.android.gms.auth.GoogleAuthUtil;
+import com.google.android.gms.auth.UserRecoverableAuthException;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.govindadasu.androidboilerplate.app.App;
 import com.govindadasu.androidboilerplate.bo.ServerAccessToken;
 import com.govindadasu.androidboilerplate.constant.Constants;
 import com.govindadasu.androidboilerplate.task.EmailSignInTask;
 import com.govindadasu.androidboilerplate.task.EmailSignUpTask;
-import com.govindadasu.androidboilerplate.task.GetUserProfileTask;
-import com.govindadasu.androidboilerplate.task.SignInTask;
 import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
 import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.bo.User;
+import com.govindadasu.androidboilerplate.util.Prefs;
 import com.govindadasu.androidboilerplate.util.Utils;
+import com.koushikdutta.async.future.FutureCallback;
+import com.koushikdutta.ion.Ion;
+import com.koushikdutta.ion.Response;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -145,12 +154,6 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             checkIfUserAlreadyLoggedIn();
         }
 
-        findViewById(R.id.btnSignUp).setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                gotoRegistration(view);
-            }
-        });
     }
 
     private boolean isUserLoggedOut() {
@@ -173,13 +176,24 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
     private void checkIfUserAlreadyLoggedIn() {
+        String userEmail = Prefs.getString("user_email", "");
         // facebook
         if (AccessToken.getCurrentAccessToken() != null) {
             showProgressDialog(R.string.msg_loading);
 
             loadFBUserData();
-        } else if (false) {// ceheck email login here #TODO
-
+        } else if (!TextUtils.isEmpty(userEmail)) {// check email login here
+            ServerAccessToken serverAccessToken = new Gson().fromJson(Prefs.getString(mContext.getString(R.string.key_user_access_token),""), ServerAccessToken.class);
+            if(serverAccessToken!=null && serverAccessToken.getAccess_token()!=null) {
+                User user = new User();
+                user.setEmail(email);
+                user.setAccessToken(serverAccessToken.getAccess_token());
+                user.setLoginType(User.LOGIN_TYPE_EMAIL);
+                User.setLoggedInUser(user);
+                goToLandingPage();
+            }else{
+                Prefs.putString("user_email", "");
+            }
 
         } else {
             // check google login, not any direct way
@@ -197,41 +211,41 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
     // Generic
 
-    private void onUserLoggedIn() {
+    private void onUserLoggedInWithSocialMedia() {
+        Prefs.putString("user_email", "");
 
-        if(true){
-            startActivity(new Intent(mContext, LandingActivity.class));
-            finish();
-            return;
-        }
+        showProgressDialog(R.string.msg_sigining_in);
 
-        final SharedPreferences sharedPreferences=PreferenceManager.getDefaultSharedPreferences(mContext);
-        String accessToken= sharedPreferences.getString(mContext.getString(R.string.key_user_access_tocken), "");
-        if(accessToken==null){return;}
-        ServerAccessToken salverAccessToken=new Gson().fromJson(accessToken,ServerAccessToken.class);
-
-        showProgressDialog(R.string.msg_loading);
-        GetUserProfileTask getUserProfileTask=new GetUserProfileTask();
-
-        getUserProfileTask.setSarverURL(Constants.SARVER_URL_USER_INFO_FROM_TOCKEN);
-        getUserProfileTask.setAutheanticationTocken(" Django " + salverAccessToken.getAccess_token());
-        getUserProfileTask.setEmailSignInCallback(new ResponseCallBack() {
+        // on server login
+        Ion.with(this)
+                .load(Constants.SERVER_URL + Constants.NAMESPACE_TOKEN_EXCHANGE)
+                .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
+                .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
+                .setBodyParameter("backend",User.getLoggedInUser().isFacebookUser()?"facebook":"google-oauth2")
+                .setBodyParameter("token",User.getLoggedInUser().getAccessToken())
+                .setBodyParameter("grant_type","convert_token").asJsonObject().setCallback(new FutureCallback<JsonObject>() {
             @Override
-            public void onSuccess(String response) {
-
-                Log.d(Constants.DEBUG_KEY, "Authentication Token Response " + response);
-
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
-
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(mContext.getString(R.string.key_user_info_from_tocken), response).commit();
-                hideProgressDialog();
-                startActivity(new Intent(mContext, LandingActivity.class));
-                finish();
+            public void onCompleted(Exception e, JsonObject token) {
+                   hideProgressDialog();
+                   if(e!=null){
+                       e.printStackTrace();
+                       showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
+                       return;
+                   }
+                if(token==null || !token.toString().contains("access_token")){
+                    showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
+                    return;
+                }
+                Prefs.putString(mContext.getString(R.string.key_user_access_token), token.toString());
+               goToLandingPage();
             }
         });
-        getUserProfileTask.execute();
 
+    }
+
+    private void goToLandingPage() {
+        startActivity(new Intent(mContext, LandingActivity.class));
+        finish();
     }
 
 
@@ -243,11 +257,13 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         initiatePlusClientConnect();
         //}
         User.setLoggedInUser(null);
+        Prefs.putString("user_email", "");
         startLoginFlow();
     }
 
     private void showProgressDialog(int messageResource) {
         try {
+            hideKeyboard();
             progressDialog = new ProgressDialog(this);
             progressDialog.setMessage(getString(messageResource));
             progressDialog.setIndeterminate(true);
@@ -300,7 +316,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
+                    attemptLoginOrSignup(true);
                     return true;
                 }
                 return false;
@@ -312,7 +328,16 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             @Override
             public void onClick(View view) {
 
-                attemptLogin();
+                attemptLoginOrSignup(true);
+            }
+        });
+
+        Button signup = (Button) findViewById(R.id.btnSignUp);
+        signup.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                attemptLoginOrSignup(false);
             }
         });
 
@@ -396,26 +421,167 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         if(cancel) {focusView.requestFocus();}
         return !cancel;
     }
-    private void attemptLogin() {
+
+
+    public void resetPassword(View view)
+    {
+        // Reset errors.
+        edtEmail.setError(null);
+        edtPassword.setError(null);
+        email = edtEmail.getText().toString();
+
+
+
+        boolean cancel = false;
+        View focusView = null;
+       // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            edtEmail.setError(getString(R.string.error_field_required));
+            focusView = edtEmail;
+            cancel = true;
+        } else if (!isEmailValid(email)) {
+            edtEmail.setError(getString(R.string.error_invalid_email));
+            focusView = edtEmail;
+            cancel = true;
+        }
+
+        if(cancel) {focusView.requestFocus();}else{
+            showProgressDialog(R.string.msg_password_resetting);
+
+
+
+            Ion.with(this)
+                    .load(Constants.SERVER_URL + Constants.NAMESPACE_PASSWORD_RESET)
+                    .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
+                    .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
+                    .setBodyParameter("email", email)
+                    .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
+                @Override
+                public void onCompleted(Exception e, Response<String> result) {
+                  hideProgressDialog();
+
+                    if (e != null) {
+                        e.printStackTrace();
+                        showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
+                        return;
+                    }
+                    if (result.getHeaders().code() != 200 ) {
+                        showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
+                        return;
+                    }
+                    resetForm();
+                    showAlertDialog(R.string.title_alert, R.string.msg_password_reset);
+
+                }
+            });
+//                @Override
+//                public void onCompleted(Exception e, String token) {
+//
+//
+//                    hideProgressDialog();
+//                    if (e != null) {
+//                        e.printStackTrace();
+//                        showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
+//                        return;
+//                    }
+//                    if (token == null ) {
+//                        showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
+//                        return;
+//                    }else if(!token.toString().contains("access_token")){
+//                        showAlertDialog(R.string.title_alert, R.string.msg_invalid_username);
+//                        resetForm();
+//                        return;
+//                    }
+//                    resetForm();
+//                    showAlertDialog(R.string.title_alert, R.string.msg_password_reset);
+//                }
+        //    });
+        }
+
+    }
+    private void attemptLoginOrSignup(boolean isLoginRequest) {
 
 
         if (validateInputFields()) {
 
-            showProgressDialog(R.string.msg_sigining_in);
+            showProgressDialog(isLoginRequest ? R.string.msg_sigining_in : R.string.msg_sigining_up);
 
-            EmailSignInTask emailSignInTask=new EmailSignInTask();
-            emailSignInTask.setPassword(password);
-            emailSignInTask.setUserName(email);
-            emailSignInTask.setEmailSignInCallback(new ResponseCallBack() {
-                @Override
-                public void onSuccess(String response) {
+            if(isLoginRequest) {
+                Ion.with(this)
+                        .load(Constants.SERVER_URL + Constants.NAMESPACE_EMAIL_SIGN_IN)
+                        .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
+                        .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
+                        .setBodyParameter("username", email)
+                        .setBodyParameter("password", password)
+                        .setBodyParameter("grant_type", "password").asJsonObject().setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject token) {
+                        hideProgressDialog();
+                        if (e != null) {
+                            e.printStackTrace();
+                            showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
+                            return;
+                        }
+                        if (token == null ) {
+                            showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
+                            return;
+                        }else if(!token.toString().contains("access_token")){
+                            showAlertDialog(R.string.title_alert, R.string.msg_invalid_username);
+                            resetForm();
+                            return;
+                        }
+                        resetForm();
+                        Prefs.putString("user_email", email);
+                        Prefs.putString(mContext.getString(R.string.key_user_access_token), token.toString());
+                        ServerAccessToken serverAccessToken = new Gson().fromJson(token, ServerAccessToken.class);
 
-                    Log.d(Constants.DEBUG_KEY, "Login with email response " + response);
-                    hideProgressDialog();
-                }
-            });
-            emailSignInTask.execute();
+                        User user = new User();
+                        user.setEmail(email);
+                        user.setAccessToken(serverAccessToken.getAccess_token());
+                        user.setLoginType(User.LOGIN_TYPE_EMAIL);
+                        User.setLoggedInUser(user);
+
+                        goToLandingPage();
+                    }
+                });
+            }else{
+                Ion.with(this)
+                        .load(Constants.SERVER_URL + Constants.NAMESPACE_EMAIL_SIGNUP)
+                        .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
+                        .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
+                        .setBodyParameter("username", email)
+                        .setBodyParameter("email", email)
+                        .setBodyParameter("password", password)
+                        .asJsonObject().setCallback(new FutureCallback<JsonObject>() {
+                    @Override
+                    public void onCompleted(Exception e, JsonObject token) {
+                        hideProgressDialog();
+                        if (e != null) {
+                            e.printStackTrace();
+                            showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
+                            return;
+                        }
+                        if (token == null) {
+                            showAlertDialog(R.string.title_alert, R.string.msg_unable_to_sign_up);
+                            return;
+                        }else if(!token.toString().contains("id")){
+                            showAlertDialog(R.string.title_alert, R.string.msg_provided_email_in_used);
+                            return;
+                        }
+                        resetForm();
+                        showAlertDialog(R.string.title_alert, R.string.msg_signup_successful);
+                    }
+                });
+
+
+            }
+
         }
+    }
+
+    private void resetForm() {
+        edtEmail.setText("");
+        edtPassword.setText("");
     }
 
 
@@ -471,6 +637,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
 
+
+
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -500,20 +668,30 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                 Person currentPerson = Plus.PeopleApi
                         .getCurrentPerson(getPlusClient());
 
-                User user = new User();
+                final User user = new User();
                 user.setUserId(currentPerson.getId());
                 //user.setAccess_token();
 
                 //String name = currentPerson.getDisplayName();
-
-                user.setGender(currentPerson.getGender()== Person.Gender.MALE?"Male":currentPerson.getGender()==Person.Gender.FEMALE?"Female":"Other");
+                user.setGender(currentPerson.getGender() == Person.Gender.MALE ? "Male" : currentPerson.getGender() == Person.Gender.FEMALE ? "Female" : "Other");
                 user.setFirstName(currentPerson.getName().getGivenName());
                 user.setLastName(currentPerson.getName().getFamilyName());
                 user.setEmail(Plus.AccountApi.getAccountName(getPlusClient()));
                 user.setProfilePictureUrl(currentPerson.getImage().getUrl());
                 user.setLoginType(User.LOGIN_TYPE_GOOGLE);
+
+
                 User.setLoggedInUser(user);
-                onUserLoggedIn();
+
+                new RetrieveTokenTask(){
+                    @Override
+                    protected void onPostExecute(String s) {
+                        super.onPostExecute(s);
+                        user.setAccessToken(s);
+                        onUserLoggedInWithSocialMedia();
+                    }
+                }.execute(user.getEmail());
+
 
 
             } else {
@@ -597,32 +775,32 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     private void signInFBToken() {
 
-        String accessToken= User.getLoggedInUser().getAccessToken();
-        SignInTask signInTask=new SignInTask();
-        signInTask.setSarverURL(Constants.SARVER_URL);
-        signInTask.setAPIString(Constants.API_EXCHANGE_FB_TOCKEN);
-        signInTask.parameters=getFBTockenLoginParameters(accessToken);
-
-        signInTask.execute();
-        signInTask.setEmailSignInCallback(new ResponseCallBack() {
-            @Override
-            public void onSuccess(String response) {
-
-                if (response != null) {
-                    Log.d(Constants.DEBUG_KEY, "GEt Server Token Against FB Token" + response.toString());
-                } else {
-                    Log.d(Constants.DEBUG_KEY, "GEt Server Token Against FB Token  NULL");
-                }
-
-                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginSignupActivity.this);
-                SharedPreferences.Editor editor = preferences.edit();
-
-                editor.putString(mContext.getString(R.string.key_user_access_tocken), response).commit();
-
-                hideProgressDialog();
-                onUserLoggedIn();
-            }
-        });
+//        String accessToken= User.getLoggedInUser().getAccessToken();
+//        SignInTask signInTask=new SignInTask();
+//        signInTask.setSarverURL(Constants.SARVER_URL);
+//        signInTask.setAPIString(Constants.API_EXCHANGE_FB_TOCKEN);
+//        signInTask.parameters= getFBTokenLoginParameters(accessToken);
+//
+//        signInTask.execute();
+//        signInTask.setEmailSignInCallback(new ResponseCallBack() {
+//            @Override
+//            public void onSuccess(String response) {
+//
+//                if (response != null) {
+//                    Log.d(Constants.DEBUG_KEY, "GEt Server Token Against FB Token" + response.toString());
+//                } else {
+//                    Log.d(Constants.DEBUG_KEY, "GEt Server Token Against FB Token  NULL");
+//                }
+//
+//                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginSignupActivity.this);
+//                SharedPreferences.Editor editor = preferences.edit();
+//
+//                editor.putString(mContext.getString(R.string.key_user_access_token), response).commit();
+//
+//                hideProgressDialog();
+//                onUserLoggedInWithSocialMedia();
+//            }
+//        });
 
     }
 
@@ -630,7 +808,6 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     public void gotoRegistration(View v){
 
         if(validateInputFields())
-
         {
             showProgressDialog(R.string.msg_loading);
             EmailSignUpTask signUpTask=new EmailSignUpTask();
@@ -639,10 +816,10 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                 public void onSuccess(String response) {
                     SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(mContext);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(mContext.getString(R.string.key_user_access_tocken),response).commit();
+                    editor.putString(mContext.getString(R.string.key_user_access_token),response).commit();
                     Log.d(Constants.DEBUG_KEY, "Sign up Access Token " + response);
                     hideProgressDialog();
-                    onUserLoggedIn();
+                    onUserLoggedInWithSocialMedia();
                 }
             });
             signUpTask.setUserName(email);
@@ -653,17 +830,35 @@ public class LoginSignupActivity extends PlusBaseActivity implements
        else { Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();}
     }
 
-    private String getFBTockenLoginParameters(String fbTocken)
+    private class RetrieveTokenTask extends AsyncTask<String, Void, String> {
 
-    {
-String parameters="";
+        @Override
+        protected String doInBackground(String... params) {
+            String accountName = params[0];
+            String scopes = "oauth2:profile email";
+            String token = null;
+            try {
+                token = GoogleAuthUtil.getToken(getApplicationContext(), accountName, scopes);
+            } catch (IOException e) {
+                Log.e(App.getTag(), e.getMessage());
+            } catch (UserRecoverableAuthException e) {
 
-        parameters+="client_id="+Constants.CLIENT_ID+"&";
-        parameters+="client_secret="+Constants.CLIENT_SECRIT+"&";
-        parameters+="backend="+"facebook&";
-        parameters+="token="+fbTocken+"&";
-        parameters+="grant_type="+"convert_token";
+            } catch (GoogleAuthException e) {
+                Log.e(App.getTag(), e.getMessage());
+            }
+            return token;
+        }
 
-        return parameters;
     }
+
+    private void hideKeyboard(){
+        try{
+            View view = this.getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }catch (Exception e){}
+    }
+
 }

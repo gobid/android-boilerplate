@@ -30,7 +30,7 @@ public class EmailSignUpTask extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... urls) {
 
-        return getOutputFromUrl(getSarverURL());
+        return getOutputFromUrl(getServerURL());
     }
 
     private String getOutputFromUrl(String url_string) {
@@ -108,8 +108,8 @@ public class EmailSignUpTask extends AsyncTask<String, Void, String> {
         this.emailSignInCallback = emailSignInCallback;
     }
 
-    public String getSarverURL() {
-        return Constants.BASE_SARVER_URL+Constants.NAMESPACE_EMAIL_SIGNUP ;
+    public String getServerURL() {
+        return Constants.BASE_SERVER_URL+Constants.NAMESPACE_EMAIL_SIGNUP ;
     }
 
 

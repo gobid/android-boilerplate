@@ -89,4 +89,8 @@ public class User {
     public void setProfilePictureUrl(String profilePictureUrl) {
         this.profilePictureUrl = profilePictureUrl;
     }
+
+    public boolean isFacebookUser() {
+        return loginType == LOGIN_TYPE_FACEBOOK;
+    }
 }

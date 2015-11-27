@@ -203,7 +203,7 @@ public class RegisterActivity extends AppCompatActivity implements LoaderCallbac
                 "&email=" + email +
                 "&password=" + password;
         task.setEmailSignInCallback(this);
-        task.setSarverURL(mContext.getString(R.string.rest_api_url) + "/djoser-auth/register/");
+        task.setServerURL(mContext.getString(R.string.rest_api_url) + "/djoser-auth/register/");
         task.execute();
 
     }
