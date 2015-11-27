@@ -1,14 +1,14 @@
-    <resources>
+<resources>
     <string name="app_name">androidboilerplate</string>
     <string name="action_settings">Settings</string>
-        <string name="hello_world">Hello World</string>
-        <string name="prompt_email">Email</string>
-        <string name="prompt_password">Prompt Password</string>
-        <string name="action_sign_in_short">Sign In Short</string>
-        <string name="action_sign_in">Sign in</string>
-        <string name="access_token">access_token</string>
-        <string name="action_sign_up">Sign Up</string>
-        <string name="facebook_app_id">491260624369943</string>
+    <string name="hello_world">Hello World</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Prompt Password</string>
+    <string name="action_sign_in_short">Login</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="access_token">access_token</string>
+    <string name="action_sign_up">Sign Up</string>
+    <string name="facebook_app_id">491260624369943</string>
     <string name="title_activity_login2">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -18,30 +18,41 @@
         completions."
     </string>
     <string name="title_activity_main2">Main2Activity</string>
-        <string name="old_url">https://forge.fwd.wf</string>
-        <string name="rest_api_url">http://apitodo.flipbitsolutions.com</string>
-        <string name="signing_up">Signing in, Please wait...</string>
-        <string name="msg_sigining_in">Signing in, Please wait...</string>
-        <string name="msg_unable_to_login">Unable to sign in. Please try again later.</string>
-        <string name="title_alert">Alert</string>
+    <string name="old_url">https://forge.fwd.wf</string>
+    <string name="rest_api_url">http://apitodo.flipbitsolutions.com</string>
+    <string name="signing_up">Signing in, Please wait...</string>
+    <string name="msg_sigining_in">Signing in, Please wait...</string>
+    <string name="msg_unable_to_login">Unable to sign in. Please try again later.</string>
+    <string name="title_alert">Alert</string>
     <string name="title_activity_maps">Map</string>
-        <string name="msg_loading">Loading, Please wait...</string>
+    <string name="msg_loading">Loading, Please wait...</string>
 
-        <string name="key_user_access_tocken">user_access_tocken</string>
+    <string name="key_user_access_token">user_access_token</string>
 
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_change_password">ChangePasswordActivity</string>
     <string name="hint_new_password">Enter new password</string>
 
-        <string name="change_password">Change Password</string>
-        <string name="txtFirstName">First Name</string>
+    <string name="change_password">Change Password</string>
+    <string name="txtFirstName">First Name</string>
     <string name="title_activity_landing">LandingActivity</string>
-        <string name="gender">Gender</string>
-        <string name="lastName">Last Name</string>
-        <string name="firstName">First Name</string>
-        <string name="userId">User ID</string>
-        <string name="key_user_info_from_tocken">key_user_info_from_tocken</string>
-        <string name="msg_password_reset">Please check your email for a link to confirm the password change.</string>
+    <string name="gender">Gender</string>
+    <string name="lastName">Last Name</string>
+    <string name="firstName">First Name</string>
+    <string name="userId">User ID</string>
+    <string name="key_user_info_from_token">key_user_info_from_token</string>
+    <string name="msg_password_reset">A password reset link has been sent tou your email.</string>
+    <string name="msg_unable_to_login_with_server">Unable to login into server.\nPlease try again later.</string>
+    <string name="msg_invalid_token_from_server">Invalid token received from server. Please try again later.</string>
+    <string name="msg_other_menu">Other menu clicked</string>
+    <string name="msg_sigining_up">Signing up, Please wait...</string>
+    <string name="msg_unable_to_sign_up">Unable to signup right now. Please try again later.</string>
+    <string name="msg_provided_email_in_used">Provided email is already in used. Please use a different one.</string>
+    <string name="msg_signup_successful">Your account has been created successfully. Please check your email for activation link.</string>
+    <string name="msg_invalid_username">Invalid username/password or your account is not activated yet. Please check your email for activation link.</string>
+    <string name="msg_password_resetting">Resetting Password. Please wait...</string>
+    <string name="resetPassword">Reset Password</string>
 
 
-    </resources>
+
+</resources>

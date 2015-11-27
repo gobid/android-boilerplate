@@ -35,7 +35,7 @@ public class ChangePasswordActivity extends ActionBarActivity {
         mContext=ChangePasswordActivity.this;
 
         SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(mContext);
-        String serverAccessTokenStr=preferences.getString(mContext.getString(R.string.key_user_access_tocken), "");
+        String serverAccessTokenStr=preferences.getString(mContext.getString(R.string.key_user_access_token), "");
         Gson gson=new Gson();
         serverAccessToken =  gson.fromJson(serverAccessTokenStr,ServerAccessToken.class);
 //        String userInfo=preferences.getString(mContext.getString(R.string.key_user_info_from_tocken), "");
@@ -69,7 +69,7 @@ public class ChangePasswordActivity extends ActionBarActivity {
 
     public void changePassword(View view) {
         SharedPreferences preferences= PreferenceManager.getDefaultSharedPreferences(mContext);
-        String serverAccessTokenStr=preferences.getString(mContext.getString(R.string.key_user_access_tocken), "");
+        String serverAccessTokenStr=preferences.getString(mContext.getString(R.string.key_user_access_token), "");
         Gson gson=new Gson();
         serverAccessToken =  gson.fromJson(serverAccessTokenStr,ServerAccessToken.class);
 

@@ -16,20 +16,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 
-/**
- * Created by abhishekgarg on 11/17/15.
- */
 public class SignInTask extends AsyncTask<String, Void, String> {
     public String parameters="";
-    private String sarverURL="";
+    private String serverURL="";
     int responseCode = -1;
     private ResponseCallBack emailSignInCallback;
 
-    private String autheanticationTocken=null;
+    private String authenticationToken=null;
 
     @Override
     protected String doInBackground(String... urls) {
-        return getOutputFromUrl(sarverURL);
+        return getOutputFromUrl(serverURL);
     }
 
     private String getOutputFromUrl(String url_string) {
@@ -58,8 +55,8 @@ public class SignInTask extends AsyncTask<String, Void, String> {
 
         try {
             HttpURLConnection httpConnection = (HttpURLConnection) connection;
-            if(autheanticationTocken!=null)
-            { httpConnection.setRequestProperty("Authorization", autheanticationTocken);
+            if(authenticationToken!=null)
+            { httpConnection.setRequestProperty("Authorization", authenticationToken);
                 httpConnection.setRequestMethod("GET");
             }
             else
@@ -105,20 +102,18 @@ public class SignInTask extends AsyncTask<String, Void, String> {
         this.emailSignInCallback = emailSignInCallback;
     }
 
-    public String getSarverURL() {
-        return sarverURL;
+    public String getServerURL() {
+        return serverURL;
     }
 
-    public void setSarverURL(String sarverURL) {
-        this.sarverURL = sarverURL;
+    public void setServerURL(String sarverURL) {
+        this.serverURL = sarverURL;
     }
 
     public void setAPIString(String apiURL) {
 
-        sarverURL+="/"+apiURL;
+        serverURL+="/"+apiURL;
     }
 
-    public void setAutheanticationTocken(String autheanticationTocken) {
-        this.autheanticationTocken = autheanticationTocken;
-    }
+
 }

@@ -19,11 +19,11 @@ import java.net.URLConnection;
 public class GetUserProfileTask extends AsyncTask<String, Void, String> {
 
     public String parameters="";
-    private String sarverURL="";
+    private String serverURL="";
     int responseCode = -1;
     private ResponseCallBack emailSignInCallback;
 
-    private String autheanticationTocken=null;
+    private String authenticationToken =null;
 
     @Override
     protected String doInBackground(String... urls) {
@@ -33,7 +33,7 @@ public class GetUserProfileTask extends AsyncTask<String, Void, String> {
 //                "    \"id\": 64,\n" +
 //                "    \"username\": \"sabir_alone777@yahoo.com\"\n" +
 //                "}";
-        return getOutputFromUrl(sarverURL);
+        return getOutputFromUrl(serverURL);
     }
 
     private String getOutputFromUrl(String url_string) {
@@ -62,11 +62,11 @@ public class GetUserProfileTask extends AsyncTask<String, Void, String> {
 
         try {
             HttpURLConnection httpConnection = (HttpURLConnection) connection;
-            String userCredentials =autheanticationTocken;
+            String userCredentials = authenticationToken;
 
 
            httpConnection.setRequestProperty("HTTP_AUTHORIZATION ",userCredentials);
-            //httpConnection.addRequestProperty(HttpURLConnection.H,Constants.KEY_AUTHEATICATION+userCredentials);
+            //httpConnection.addRequestProperty(HttpURLConnection.H,Constants.KEY_AUTHENTICATION+userCredentials);
                 httpConnection.setRequestMethod(Constants.METHOD_GET);
 
             httpConnection.setDoOutput(true);
@@ -100,20 +100,20 @@ public class GetUserProfileTask extends AsyncTask<String, Void, String> {
         this.emailSignInCallback = emailSignInCallback;
     }
 
-    public String getSarverURL() {
-        return sarverURL;
+    public String getServerURL() {
+        return serverURL;
     }
 
-    public void setSarverURL(String sarverURL) {
-        this.sarverURL = sarverURL;
+    public void setServerURL(String sarverURL) {
+        this.serverURL = sarverURL;
     }
 
     public void setAPIString(String apiURL) {
 
-        sarverURL+="/"+apiURL;
+        serverURL+="/"+apiURL;
     }
 
-    public void setAutheanticationTocken(String autheanticationTocken) {
-        this.autheanticationTocken = autheanticationTocken;
+    public void setAuthenticationToken(String authenticationToken) {
+        this.authenticationToken = authenticationToken;
     }
 }

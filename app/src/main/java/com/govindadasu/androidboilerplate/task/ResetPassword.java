@@ -104,11 +104,11 @@ public class ResetPassword extends AsyncTask<String, Void, String> {
     }
 
     public String getRsetURL() {
-        return Constants.BASE_SARVER_URL+Constants.NAMESPACE_PASSWORD_RESET;
+        return Constants.BASE_SERVER_URL+Constants.NAMESPACE_PASSWORD_RESET;
     }
 
     public String getConfirmURL() {
-        return Constants.SARVER_URL + Constants.NAMESPACE_PASSWORD_RESET_CONFIRM;
+        return Constants.SERVER_URL + Constants.NAMESPACE_PASSWORD_RESET_CONFIRM;
     }
 
     public String getRestParameters() {
