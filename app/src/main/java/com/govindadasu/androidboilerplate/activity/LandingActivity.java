@@ -34,7 +34,6 @@ public class LandingActivity extends Activity {
         }
         Intent intent=new Intent(LandingActivity.this,ProfileActivity.class);
         startActivity(intent);
-        finish();
 
     }
     public void resetPassword(View view)
