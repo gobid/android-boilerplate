@@ -41,7 +41,7 @@
     <string name="firstName">First Name</string>
     <string name="userId">User ID</string>
     <string name="key_user_info_from_token">key_user_info_from_token</string>
-    <string name="msg_password_reset">A password reset link has been sent tou your email.</string>
+    <string name="msg_password_reset">A password reset link has been sent to your email.</string>
     <string name="msg_unable_to_login_with_server">Unable to login into server.\nPlease try again later.</string>
     <string name="msg_invalid_token_from_server">Invalid token received from server. Please try again later.</string>
     <string name="msg_other_menu">Other menu clicked</string>
