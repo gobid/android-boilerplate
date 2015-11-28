@@ -805,30 +805,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
 
-    public void gotoRegistration(View v){
 
-        if(validateInputFields())
-        {
-            showProgressDialog(R.string.msg_loading);
-            EmailSignUpTask signUpTask=new EmailSignUpTask();
-            signUpTask.setEmailSignInCallback(new ResponseCallBack() {
-                @Override
-                public void onSuccess(String response) {
-                    SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(mContext);
-                    SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(mContext.getString(R.string.key_user_access_token),response).commit();
-                    Log.d(Constants.DEBUG_KEY, "Sign up Access Token " + response);
-                    hideProgressDialog();
-                    onUserLoggedInWithSocialMedia();
-                }
-            });
-            signUpTask.setUserName(email);
-            signUpTask.setPassword(password);
-            signUpTask.execute();
-        }
-
-       else { Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();}
-    }
 
     private class RetrieveTokenTask extends AsyncTask<String, Void, String> {
 
