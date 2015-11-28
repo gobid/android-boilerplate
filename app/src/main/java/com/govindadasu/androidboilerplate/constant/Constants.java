@@ -18,6 +18,10 @@ public class Constants {
     public static final String KEY_AUTHENTICATION = "Authorization";
     public static final String METHOD_GET = "GET";
     public static final String GRANT_TYPE = "grant_type";
+    public static final String NAMESPACE_ME = "djoser-auth/me/";
+    public static final String NAMESPACE_ME_INFO = "/api/users/#/";
+
+
     public static String SERVER_URL="http://apitodo.flipbitsolutions.com/";
     public static final String DEBUG_KEY = "DEBUG_KEY";
     public static final String CLIENT_ID="TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU";

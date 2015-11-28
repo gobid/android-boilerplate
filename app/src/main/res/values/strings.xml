@@ -52,7 +52,11 @@
     <string name="msg_invalid_username">Invalid username/password or your account is not activated yet. Please check your email for activation link.</string>
     <string name="msg_password_resetting">Resetting Password. Please wait...</string>
     <string name="resetPassword">Reset Password</string>
-
+    <string name="msg_unable_to_get_user_data">Unable to get user data</string>
+    <string name="msg_no_user_id_in_response">No user id is found in response</string>
+    <string name="update">Update Profile</string>
+    <string name="processing">Processing, Please wait...</string>
+    <string name="username">User Name</string>
 
 
 </resources>
