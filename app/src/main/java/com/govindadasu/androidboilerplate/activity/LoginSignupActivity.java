@@ -105,7 +105,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     @Override
     protected void onPlusClientSignOut() {
-       startLoginFlow();
+        startLoginFlow();
     }
 
     @Override
@@ -118,7 +118,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     @Override
     public void onConnected(Bundle connectionHint) {
-        if(isUserLoggedOut()){
+        if (isUserLoggedOut()) {
             isLoggedOut = false;
             signOut();
             startLoginFlow();
@@ -136,7 +136,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(this);
-        mContext=LoginSignupActivity.this;
+        mContext = LoginSignupActivity.this;
         setContentView(R.layout.activity_login_signup);
         // email
         initializeEmailLogin();
@@ -145,8 +145,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         // facebook
         initializeFacebookLogin();
 
-       isLoggedOut = getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(TAG_LOGOUT, false);
-       clearLogoutFlag();
+        isLoggedOut = getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(TAG_LOGOUT, false);
+        clearLogoutFlag();
 
         if (isUserLoggedOut()) {
             onUserLoggedOut();
@@ -159,9 +159,10 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     private boolean isUserLoggedOut() {
         return isLoggedOut;// getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().getBoolean(TAG_LOGOUT, false);
     }
+
     private void clearLogoutFlag() {
-        if(getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAG_LOGOUT))
-         getIntent().getExtras().remove(TAG_LOGOUT);
+        if (getIntent() != null && getIntent().getExtras() != null && getIntent().getExtras().containsKey(TAG_LOGOUT))
+            getIntent().getExtras().remove(TAG_LOGOUT);
     }
 
     private void initializeGoogleLogin() {
@@ -183,15 +184,15 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
             loadFBUserData();
         } else if (!TextUtils.isEmpty(userEmail)) {// check email login here
-            ServerAccessToken serverAccessToken = new Gson().fromJson(Prefs.getString(mContext.getString(R.string.key_user_access_token),""), ServerAccessToken.class);
-            if(serverAccessToken!=null && serverAccessToken.getAccess_token()!=null) {
+            ServerAccessToken serverAccessToken = new Gson().fromJson(Prefs.getString(mContext.getString(R.string.key_user_access_token), ""), ServerAccessToken.class);
+            if (serverAccessToken != null && serverAccessToken.getAccess_token() != null) {
                 User user = new User();
                 user.setEmail(email);
                 user.setAccessToken(serverAccessToken.getAccess_token());
                 user.setLoginType(User.LOGIN_TYPE_EMAIL);
                 User.setLoggedInUser(user);
                 goToLandingPage();
-            }else{
+            } else {
                 Prefs.putString("user_email", "");
             }
 
@@ -213,6 +214,10 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     private void onUserLoggedInWithSocialMedia() {
         Prefs.putString("user_email", "");
+        if (!TextUtils.isEmpty(Prefs.getString(mContext.getString(R.string.key_user_access_token), ""))) { // Already Logged in
+            goToLandingPage();
+            return;
+        }
 
         showProgressDialog(R.string.msg_sigining_in);
 
@@ -221,23 +226,23 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                 .load(Constants.SERVER_URL + Constants.NAMESPACE_TOKEN_EXCHANGE)
                 .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
                 .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
-                .setBodyParameter("backend",User.getLoggedInUser().isFacebookUser()?"facebook":"google-oauth2")
-                .setBodyParameter("token",User.getLoggedInUser().getAccessToken())
-                .setBodyParameter("grant_type","convert_token").asJsonObject().setCallback(new FutureCallback<JsonObject>() {
+                .setBodyParameter("backend", User.getLoggedInUser().isFacebookUser() ? "facebook" : "google-oauth2")
+                .setBodyParameter("token", User.getLoggedInUser().getAccessToken())
+                .setBodyParameter("grant_type", "convert_token").asJsonObject().setCallback(new FutureCallback<JsonObject>() {
             @Override
             public void onCompleted(Exception e, JsonObject token) {
-                   hideProgressDialog();
-                   if(e!=null){
-                       e.printStackTrace();
-                       showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
-                       return;
-                   }
-                if(token==null || !token.toString().contains("access_token")){
+                hideProgressDialog();
+                if (e != null) {
+                    e.printStackTrace();
+                    showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
+                    return;
+                }
+                if (token == null || !token.toString().contains("access_token")) {
                     showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
                     return;
                 }
                 Prefs.putString(mContext.getString(R.string.key_user_access_token), token.toString());
-               goToLandingPage();
+                goToLandingPage();
             }
         });
 
@@ -250,59 +255,18 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
 
     private void onUserLoggedOut() {
-       // if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_FACEBOOK) {
-            LoginManager.getInstance().logOut();
+        // if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_FACEBOOK) {
+        LoginManager.getInstance().logOut();
         //}
         //else if (User.getLoggedInUser().getLoginType() == User.LOGIN_TYPE_GOOGLE) {
         initiatePlusClientConnect();
         //}
         User.setLoggedInUser(null);
         Prefs.putString("user_email", "");
+        Prefs.putString(mContext.getString(R.string.key_user_access_token), "");
         startLoginFlow();
     }
 
-    private void showProgressDialog(int messageResource) {
-        try {
-            hideKeyboard();
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage(getString(messageResource));
-            progressDialog.setIndeterminate(true);
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-        }catch (Exception e){}
-    }
-
-    private void hideProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-            progressDialog = null;
-        }
-    }
-
-
-    private void showAlertDialog(int title_res, int msg_res) {
-        showAlertDialog(getString(title_res), getString(msg_res));
-    }
-
-    private void showAlertDialog(String title, int msg_res) {
-        showAlertDialog(title, getString(msg_res));
-    }
-
-    private void showAlertDialog(int title_res, String msg) {
-        showAlertDialog(getString(title_res), msg);
-    }
-
-    private void showAlertDialog(String title, String msg) {
-        new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(msg)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
-    }
 
     // Email Login
     private void initializeEmailLogin() {
@@ -386,15 +350,14 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
 
-    private boolean validateInputFields()
-    {
+    private boolean validateInputFields() {
         // Reset errors.
         edtEmail.setError(null);
         edtPassword.setError(null);
 
         // Store values at the time of the login attempt.
-         email = edtEmail.getText().toString();
-         password = edtPassword.getText().toString();
+        email = edtEmail.getText().toString();
+        password = edtPassword.getText().toString();
 
 
         boolean cancel = false;
@@ -418,23 +381,23 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             cancel = true;
         }
 
-        if(cancel) {focusView.requestFocus();}
+        if (cancel) {
+            focusView.requestFocus();
+        }
         return !cancel;
     }
 
 
-    public void resetPassword(View view)
-    {
+    public void resetPassword(View view) {
         // Reset errors.
         edtEmail.setError(null);
         edtPassword.setError(null);
         email = edtEmail.getText().toString();
 
 
-
         boolean cancel = false;
         View focusView = null;
-       // Check for a valid email address.
+        // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             edtEmail.setError(getString(R.string.error_field_required));
             focusView = edtEmail;
@@ -445,9 +408,10 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             cancel = true;
         }
 
-        if(cancel) {focusView.requestFocus();}else{
+        if (cancel) {
+            focusView.requestFocus();
+        } else {
             showProgressDialog(R.string.msg_password_resetting);
-
 
 
             Ion.with(this)
@@ -458,14 +422,14 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                     .asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
                 @Override
                 public void onCompleted(Exception e, Response<String> result) {
-                  hideProgressDialog();
+                    hideProgressDialog();
 
                     if (e != null) {
                         e.printStackTrace();
                         showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
                         return;
                     }
-                    if (result.getHeaders().code() != 200 ) {
+                    if (result.getHeaders().code() != 200) {
                         showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
                         return;
                     }
@@ -495,10 +459,11 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 //                    resetForm();
 //                    showAlertDialog(R.string.title_alert, R.string.msg_password_reset);
 //                }
-        //    });
+            //    });
         }
 
     }
+
     private void attemptLoginOrSignup(boolean isLoginRequest) {
 
 
@@ -506,7 +471,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
             showProgressDialog(isLoginRequest ? R.string.msg_sigining_in : R.string.msg_sigining_up);
 
-            if(isLoginRequest) {
+            if (isLoginRequest) {
                 Ion.with(this)
                         .load(Constants.SERVER_URL + Constants.NAMESPACE_EMAIL_SIGN_IN)
                         .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
@@ -522,10 +487,10 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                             showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
                             return;
                         }
-                        if (token == null ) {
+                        if (token == null) {
                             showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
                             return;
-                        }else if(!token.toString().contains("access_token")){
+                        } else if (!token.toString().contains("access_token")) {
                             showAlertDialog(R.string.title_alert, R.string.msg_invalid_username);
                             resetForm();
                             return;
@@ -544,7 +509,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                         goToLandingPage();
                     }
                 });
-            }else{
+            } else {
                 Ion.with(this)
                         .load(Constants.SERVER_URL + Constants.NAMESPACE_EMAIL_SIGNUP)
                         .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
@@ -564,7 +529,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                         if (token == null) {
                             showAlertDialog(R.string.title_alert, R.string.msg_unable_to_sign_up);
                             return;
-                        }else if(!token.toString().contains("id")){
+                        } else if (!token.toString().contains("id")) {
                             showAlertDialog(R.string.title_alert, R.string.msg_provided_email_in_used);
                             return;
                         }
@@ -590,7 +555,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
     private boolean isPasswordValid(String password) {
-        return password.length() > 4;
+        return true;
     }
 
     @Override
@@ -637,8 +602,6 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
 
-
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -674,8 +637,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
                 //String name = currentPerson.getDisplayName();
                 user.setGender(currentPerson.getGender() == Person.Gender.MALE ? "Male" : currentPerson.getGender() == Person.Gender.FEMALE ? "Female" : "Other");
-                user.setFirstName(currentPerson.getName().getGivenName());
-                user.setLastName(currentPerson.getName().getFamilyName());
+                user.setFirst_name(currentPerson.getName().getGivenName());
+                user.setLast_name(currentPerson.getName().getFamilyName());
                 user.setEmail(Plus.AccountApi.getAccountName(getPlusClient()));
                 user.setProfilePictureUrl(currentPerson.getImage().getUrl());
                 user.setLoginType(User.LOGIN_TYPE_GOOGLE);
@@ -683,7 +646,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
                 User.setLoggedInUser(user);
 
-                new RetrieveTokenTask(){
+                new RetrieveTokenTask() {
                     @Override
                     protected void onPostExecute(String s) {
                         super.onPostExecute(s);
@@ -691,7 +654,6 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                         onUserLoggedInWithSocialMedia();
                     }
                 }.execute(user.getEmail());
-
 
 
             } else {
@@ -750,8 +712,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                         } else {
 //                          // logged in
                             User user = new User();
-                            user.setFirstName(me.optString("first_name"));
-                            user.setLastName(me.optString("last_name"));
+                            user.setFirst_name(me.optString("first_name"));
+                            user.setLast_name(me.optString("last_name"));
                             user.setEmail(me.optString("email"));
                             user.setGender(me.optString("gender"));
                             user.setAccessToken(AccessToken.getCurrentAccessToken().getToken());
@@ -805,18 +767,17 @@ public class LoginSignupActivity extends PlusBaseActivity implements
     }
 
 
-    public void gotoRegistration(View v){
+    public void gotoRegistration(View v) {
 
-        if(validateInputFields())
-        {
+        if (validateInputFields()) {
             showProgressDialog(R.string.msg_loading);
-            EmailSignUpTask signUpTask=new EmailSignUpTask();
+            EmailSignUpTask signUpTask = new EmailSignUpTask();
             signUpTask.setEmailSignInCallback(new ResponseCallBack() {
                 @Override
                 public void onSuccess(String response) {
-                    SharedPreferences preferences=PreferenceManager.getDefaultSharedPreferences(mContext);
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(mContext);
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(mContext.getString(R.string.key_user_access_token),response).commit();
+                    editor.putString(mContext.getString(R.string.key_user_access_token), response).commit();
                     Log.d(Constants.DEBUG_KEY, "Sign up Access Token " + response);
                     hideProgressDialog();
                     onUserLoggedInWithSocialMedia();
@@ -825,9 +786,9 @@ public class LoginSignupActivity extends PlusBaseActivity implements
             signUpTask.setUserName(email);
             signUpTask.setPassword(password);
             signUpTask.execute();
+        } else {
+            Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();
         }
-
-       else { Toast.makeText(LoginSignupActivity.this, "Not yet implemented.!", Toast.LENGTH_SHORT).show();}
     }
 
     private class RetrieveTokenTask extends AsyncTask<String, Void, String> {
@@ -851,14 +812,5 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
     }
 
-    private void hideKeyboard(){
-        try{
-            View view = this.getCurrentFocus();
-            if (view != null) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-        }catch (Exception e){}
-    }
 
 }

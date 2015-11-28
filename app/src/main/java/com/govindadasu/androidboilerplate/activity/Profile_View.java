@@ -28,7 +28,7 @@ public class Profile_View extends Activity {
         setContentView(R.layout.profile__view);
         TextView tv = (TextView)findViewById(R.id.userInfo);
 
-        tv.setText("Welcome "+(User.getLoggedInUser().getLoginType()==User.LOGIN_TYPE_FACEBOOK?"Facebook":"Google")+" User "+User.getLoggedInUser().getFirstName());
+        tv.setText("Welcome "+(User.getLoggedInUser().getLoginType()==User.LOGIN_TYPE_FACEBOOK?"Facebook":"Google")+" User "+User.getLoggedInUser().getFirst_name());
 
         if(User.getLoggedInUser().getLoginType()==User.LOGIN_TYPE_FACEBOOK){
             ProfilePictureView pv = (ProfilePictureView) findViewById(R.id.fb_profile_pic_view);

@@ -62,12 +62,12 @@
     </android.support.design.widget.TextInputLayout>
 
     <android.support.design.widget.TextInputLayout
-        android:layout_width="match_parent"
+        android:layout_width="match_parent" android:visibility="gone"
         android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/txtGender"
-            android:hint="@string/gender"
+            android:hint="@string/gender" android:editable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/profile_text_style"
@@ -81,7 +81,7 @@
 
         <EditText
             android:id="@+id/txtUserId"
-            android:hint="@string/userId"
+            android:hint="@string/username" android:editable="false"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/profile_text_style"
@@ -89,6 +89,12 @@
 
     </android.support.design.widget.TextInputLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/update" android:onClick="updateProfile"
+        android:id="@+id/button" android:padding="25dp"
+        android:layout_gravity="center_horizontal" />
 
 
 </LinearLayout>
