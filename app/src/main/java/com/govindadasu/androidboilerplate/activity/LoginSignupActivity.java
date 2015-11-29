@@ -1,22 +1,18 @@
 package com.govindadasu.androidboilerplate.activity;
 
 import android.annotation.TargetApi;
-import android.app.AlertDialog;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.CursorLoader;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -26,7 +22,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -52,14 +47,11 @@ import com.google.android.gms.plus.Plus;
 import com.google.android.gms.plus.model.people.Person;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.app.App;
 import com.govindadasu.androidboilerplate.bo.ServerAccessToken;
-import com.govindadasu.androidboilerplate.constant.Constants;
-import com.govindadasu.androidboilerplate.task.EmailSignInTask;
-import com.govindadasu.androidboilerplate.task.EmailSignUpTask;
-import com.govindadasu.androidboilerplate.callback.ResponseCallBack;
-import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.bo.User;
+import com.govindadasu.androidboilerplate.constant.Constants;
 import com.govindadasu.androidboilerplate.util.Prefs;
 import com.govindadasu.androidboilerplate.util.Utils;
 import com.koushikdutta.async.future.FutureCallback;
@@ -734,38 +726,6 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         request.setParameters(parameters);
         request.executeAsync();
     }
-
-    private void signInFBToken() {
-
-//        String accessToken= User.getLoggedInUser().getAccessToken();
-//        SignInTask signInTask=new SignInTask();
-//        signInTask.setSarverURL(Constants.SARVER_URL);
-//        signInTask.setAPIString(Constants.API_EXCHANGE_FB_TOCKEN);
-//        signInTask.parameters= getFBTokenLoginParameters(accessToken);
-//
-//        signInTask.execute();
-//        signInTask.setEmailSignInCallback(new ResponseCallBack() {
-//            @Override
-//            public void onSuccess(String response) {
-//
-//                if (response != null) {
-//                    Log.d(Constants.DEBUG_KEY, "GEt Server Token Against FB Token" + response.toString());
-//                } else {
-//                    Log.d(Constants.DEBUG_KEY, "GEt Server Token Against FB Token  NULL");
-//                }
-//
-//                SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(LoginSignupActivity.this);
-//                SharedPreferences.Editor editor = preferences.edit();
-//
-//                editor.putString(mContext.getString(R.string.key_user_access_token), response).commit();
-//
-//                hideProgressDialog();
-//                onUserLoggedInWithSocialMedia();
-//            }
-//        });
-
-    }
-
 
 
     private class RetrieveTokenTask extends AsyncTask<String, Void, String> {

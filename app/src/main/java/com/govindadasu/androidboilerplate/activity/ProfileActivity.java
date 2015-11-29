@@ -1,28 +1,20 @@
 package com.govindadasu.androidboilerplate.activity;
 
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import com.facebook.HttpMethod;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.govindadasu.androidboilerplate.R;
 import com.govindadasu.androidboilerplate.bo.Member;
 import com.govindadasu.androidboilerplate.bo.ServerAccessToken;
-import com.govindadasu.androidboilerplate.bo.User;
 import com.govindadasu.androidboilerplate.constant.Constants;
 import com.govindadasu.androidboilerplate.util.Prefs;
 import com.koushikdutta.async.future.FutureCallback;
 import com.koushikdutta.ion.Ion;
-import com.koushikdutta.ion.Response;
 
 public class ProfileActivity extends BaseActivity {
 
@@ -47,8 +39,6 @@ public class ProfileActivity extends BaseActivity {
             showProgressDialog(R.string.processing);
             Ion.with(this)
                     .load("GET", Constants.SERVER_URL + Constants.NAMESPACE_ME).addHeader("Authorization", " Django " + accessToken.getAccess_token())
-//                    .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
-//                    .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                     .asJsonObject().setCallback(new FutureCallback<JsonObject>() {
                 @Override
                 public void onCompleted(Exception e, JsonObject response) {
@@ -64,8 +54,6 @@ public class ProfileActivity extends BaseActivity {
 
                         Ion.with(ProfileActivity.this)
                                 .load("GET", Constants.SERVER_URL + Constants.NAMESPACE_ME_INFO.replace("#", djangoUserId + "")).addHeader("Authorization", " Django " + accessToken.getAccess_token())
-//                    .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
-//                    .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                                 .asJsonObject().setCallback(new FutureCallback<JsonObject>() {
                             @Override
                             public void onCompleted(Exception e, JsonObject response) {
@@ -81,17 +69,11 @@ public class ProfileActivity extends BaseActivity {
                                 } else {
                                     showAlertDialog(R.string.title_alert, R.string.msg_unable_to_get_user_data);
                                 }
-
                             }
                         });
-
-
                     } else {
                         hideProgressDialog();
-
                         showAlertDialog(R.string.title_alert, R.string.msg_no_user_id_in_response);
-
-
                     }
                 }
             });
@@ -119,9 +101,6 @@ public class ProfileActivity extends BaseActivity {
     }
 
 
-
-
-
     public void updateProfile(View view) {
         if (txtFirstName != null && txtLastName != null) {
             String firstName = txtFirstName.getText().toString();
@@ -131,7 +110,7 @@ public class ProfileActivity extends BaseActivity {
             } else if (TextUtils.isEmpty(lastName)) {
                 txtLastName.setError(getString(R.string.error_field_required));
             } else {
-showProgressDialog(R.string.processing);
+                showProgressDialog(R.string.processing);
                 Ion.with(ProfileActivity.this)
                         .load("PATCH", Constants.SERVER_URL + Constants.NAMESPACE_ME_INFO.replace("#", djangoUserId + "")).addHeader("Authorization", " Django " + accessToken.getAccess_token())
                         .setBodyParameter("first_name", firstName)

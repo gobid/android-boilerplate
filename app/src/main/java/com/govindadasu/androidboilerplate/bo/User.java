@@ -40,7 +40,6 @@ public class User extends Member {
     }
 
 
-
     public String getGender() {
         return gender;
     }
