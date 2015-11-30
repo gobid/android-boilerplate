@@ -3,8 +3,8 @@ package com.govindadasu.androidboilerplate.constant;
 
 public class Constants {
     public static final String NAMESPACE_TOKEN_EXCHANGE = "auth/convert-token";
-    public static final String SERVER_URL_USER_INFO_FROM_TOKEN = "http://apitodo.flipbitsolutions.com/djoser-auth/me/";
-    public static final String BASE_SERVER_URL="http://apitodo.flipbitsolutions.com";
+    public static final String SERVER_URL_USER_INFO_FROM_TOKEN = "http://forge.fwd.wf/djoser-auth/me/";
+    public static final String BASE_SERVER_URL="http://forge.fwd.wf";
     public static final String NAMESPACE_PASSWORD_RESET="/djoser-auth/password/reset/";
     public static final String NAMESPACE_PASSWORD_RESET_CONFIRM="/djoser-auth/password/reset/confirm/";
     public static final String NAMESPACE_EMAIL_SIGNUP="/djoser-auth/register/";
@@ -22,7 +22,7 @@ public class Constants {
     public static final String NAMESPACE_ME_INFO = "/api/users/#/";
 
 
-    public static String SERVER_URL="http://apitodo.flipbitsolutions.com/";
+    public static String SERVER_URL="http://forge.fwd.wf/";
     public static final String DEBUG_KEY = "DEBUG_KEY";
     public static final String CLIENT_ID="TxjxrOBvlhnjcsG7MUSSBoOa0b92EJkg7LR9JxvU";
     public static final String CLIENT_SECRIT="4UrBWZwNcYVhd1y9XTKr2zu9IlZeb67H5vShIxJ4wh26zCXEIMGrmKVPz9Kfni1Y0NfEdug5GMaZaVVmxHjKB54tBHfKCYGTuCFDmDuuQw7l20lE7TWdjCintnIjNpVZ";
