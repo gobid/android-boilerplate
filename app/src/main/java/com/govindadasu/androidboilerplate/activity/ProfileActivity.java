@@ -46,7 +46,7 @@ public class ProfileActivity extends BaseActivity {
         if (accessToken != null) {
             showProgressDialog(R.string.processing);
             Ion.with(this)
-                    .load("GET", Constants.SERVER_URL + Constants.NAMESPACE_ME).addHeader("Authorization", " Django " + accessToken.getAccess_token())
+                    .load("GET", Constants.BASE_SERVER_URL + Constants.NAMESPACE_ME).addHeader("Authorization", " Django " + accessToken.getAccess_token())
 //                    .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
 //                    .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                     .asJsonObject().setCallback(new FutureCallback<JsonObject>() {
@@ -63,7 +63,7 @@ public class ProfileActivity extends BaseActivity {
                         djangoUserId = response.get("id").getAsInt();
 
                         Ion.with(ProfileActivity.this)
-                                .load("GET", Constants.SERVER_URL + Constants.NAMESPACE_ME_INFO.replace("#", djangoUserId + "")).addHeader("Authorization", " Django " + accessToken.getAccess_token())
+                                .load("GET", Constants.BASE_SERVER_URL + Constants.NAMESPACE_ME_INFO.replace("#", djangoUserId + "")).addHeader("Authorization", " Django " + accessToken.getAccess_token())
 //                    .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
 //                    .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                                 .asJsonObject().setCallback(new FutureCallback<JsonObject>() {
@@ -133,7 +133,7 @@ public class ProfileActivity extends BaseActivity {
             } else {
 showProgressDialog(R.string.processing);
                 Ion.with(ProfileActivity.this)
-                        .load("PATCH", Constants.SERVER_URL + Constants.NAMESPACE_ME_INFO.replace("#", djangoUserId + "")).addHeader("Authorization", " Django " + accessToken.getAccess_token())
+                        .load("PATCH", Constants.BASE_SERVER_URL + Constants.NAMESPACE_ME_INFO.replace("#", djangoUserId + "")).addHeader("Authorization", " Django " + accessToken.getAccess_token())
                         .setBodyParameter("first_name", firstName)
                         .setBodyParameter("last_name", lastName)
                         .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)

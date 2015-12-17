@@ -108,7 +108,7 @@ public class ResetPassword extends AsyncTask<String, Void, String> {
     }
 
     public String getConfirmURL() {
-        return Constants.SERVER_URL + Constants.NAMESPACE_PASSWORD_RESET_CONFIRM;
+        return Constants.BASE_SERVER_URL + Constants.NAMESPACE_PASSWORD_RESET_CONFIRM;
     }
 
     public String getRestParameters() {

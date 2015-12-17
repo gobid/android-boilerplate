@@ -223,7 +223,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
         // on server login
         Ion.with(this)
-                .load(Constants.SERVER_URL + Constants.NAMESPACE_TOKEN_EXCHANGE)
+                .load(Constants.BASE_SERVER_URL + Constants.NAMESPACE_TOKEN_EXCHANGE)
                 .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
                 .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                 .setBodyParameter("backend", User.getLoggedInUser().isFacebookUser() ? "facebook" : "google-oauth2")
@@ -415,7 +415,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
 
             Ion.with(this)
-                    .load(Constants.SERVER_URL + Constants.NAMESPACE_PASSWORD_RESET)
+                    .load(Constants.BASE_SERVER_URL + Constants.NAMESPACE_PASSWORD_RESET)
                     .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
                     .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                     .setBodyParameter("email", email)
@@ -473,45 +473,54 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
             if (isLoginRequest) {
                 Ion.with(this)
-                        .load(Constants.SERVER_URL + Constants.NAMESPACE_EMAIL_SIGN_IN)
+                        .load(Constants.BASE_SERVER_URL + Constants.NAMESPACE_EMAIL_SIGN_IN)
                         .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
                         .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                         .setBodyParameter("username", email)
                         .setBodyParameter("password", password)
-                        .setBodyParameter("grant_type", "password").asJsonObject().setCallback(new FutureCallback<JsonObject>() {
+                        .setBodyParameter("grant_type", "password").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
                     @Override
-                    public void onCompleted(Exception e, JsonObject token) {
+                    public void onCompleted(Exception e, Response<String> result) {
                         hideProgressDialog();
-                        if (e != null) {
-                            e.printStackTrace();
-                            showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
-                            return;
-                        }
-                        if (token == null) {
-                            showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
-                            return;
-                        } else if (!token.toString().contains("access_token")) {
-                            showAlertDialog(R.string.title_alert, R.string.msg_invalid_username);
-                            resetForm();
-                            return;
-                        }
-                        resetForm();
-                        Prefs.putString("user_email", email);
-                        Prefs.putString(mContext.getString(R.string.key_user_access_token), token.toString());
-                        ServerAccessToken serverAccessToken = new Gson().fromJson(token, ServerAccessToken.class);
 
-                        User user = new User();
-                        user.setEmail(email);
-                        user.setAccessToken(serverAccessToken.getAccess_token());
-                        user.setLoginType(User.LOGIN_TYPE_EMAIL);
-                        User.setLoggedInUser(user);
-
-                        goToLandingPage();
                     }
                 });
+
+
+//                        asSt().setCallback(new FutureCallback<JsonObject>() {
+//                    @Override
+//                    public void onCompleted(Exception e, JsonObject token) {
+//                        hideProgressDialog();
+//                        if (e != null) {
+//                            e.printStackTrace();
+//                            showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
+//                            return;
+//                        }
+//                        if (token == null) {
+//                            showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
+//                            return;
+//                        } else if (!token.toString().contains("access_token")) {
+//                            showAlertDialog(R.string.title_alert, R.string.msg_invalid_username);
+//                            resetForm();
+//                            return;
+//                        }
+//                        resetForm();
+//                        Prefs.putString("user_email", email);
+//                        Prefs.putString(mContext.getString(R.string.key_user_access_token), token.toString());
+//                        ServerAccessToken serverAccessToken = new Gson().fromJson(token, ServerAccessToken.class);
+//
+//                        User user = new User();
+//                        user.setEmail(email);
+//                        user.setAccessToken(serverAccessToken.getAccess_token());
+//                        user.setLoginType(User.LOGIN_TYPE_EMAIL);
+//                        User.setLoggedInUser(user);
+//
+//                        goToLandingPage();
+//                    }
+//                });
             } else {
                 Ion.with(this)
-                        .load(Constants.SERVER_URL + Constants.NAMESPACE_EMAIL_SIGNUP)
+                        .load(Constants.BASE_SERVER_URL + Constants.NAMESPACE_EMAIL_SIGNUP)
                         .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
                         .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                         .setBodyParameter("username", email)
