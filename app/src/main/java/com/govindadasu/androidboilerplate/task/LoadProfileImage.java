@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import java.io.InputStream;
 
 /**
- *   on 11/26/2015.
+ * on 11/26/2015.
  */
 public class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
     ImageView bmImage;
@@ -33,8 +33,9 @@ public class LoadProfileImage extends AsyncTask<String, Void, Bitmap> {
     }
 
     protected void onPostExecute(Bitmap result) {
-        if(bmImage!=null && result!=null){
-        bmImage.setImageBitmap(result);
-        bmImage.setVisibility(View.VISIBLE);
-    }}
+        if (bmImage != null && result != null) {
+            bmImage.setImageBitmap(result);
+            bmImage.setVisibility(View.VISIBLE);
+        }
+    }
 }

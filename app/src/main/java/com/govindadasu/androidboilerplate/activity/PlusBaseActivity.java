@@ -3,15 +3,13 @@ package com.govindadasu.androidboilerplate.activity;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
-
-import android.app.Activity;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.plus.Plus;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.plus.Plus;
 
 /**
  * A base class to wrap communication with the Google Play Services PlusClient.
@@ -74,8 +72,8 @@ public abstract class PlusBaseActivity extends BaseActivity
 
         // Initialize the PlusClient connection.
         // Scopes indicate the information about the user your application will be able to access.
-        mPlusClient  =  new  GoogleApiClient.Builder(this).addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this).addApi(Plus.API,   Plus.PlusOptions.builder().build())
+        mPlusClient = new GoogleApiClient.Builder(this).addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this).addApi(Plus.API, Plus.PlusOptions.builder().build())
                 .addScope(Plus.SCOPE_PLUS_LOGIN).build();
     }
 
@@ -139,7 +137,7 @@ public abstract class PlusBaseActivity extends BaseActivity
             // Disconnect from Google Play Services, then reconnect in order to restart the
             // process from scratch.
             initiatePlusClientDisconnect();
-//revokeAccess();
+            //revokeAccess();
             Log.v(TAG, "Sign out successful!");
         }
 
@@ -175,7 +173,7 @@ public abstract class PlusBaseActivity extends BaseActivity
     @Override
     protected void onStart() {
         super.onStart();
-      //  initiatePlusClientConnect();
+        //  initiatePlusClientConnect();
     }
 
     @Override
@@ -274,7 +272,7 @@ public abstract class PlusBaseActivity extends BaseActivity
                 // This is a local helper function that starts the resolution of the problem,
                 // which may be showing the user an account chooser or similar.
                 startResolution();
-            }else{
+            } else {
                 onPlusClientSignOut();
             }
         }

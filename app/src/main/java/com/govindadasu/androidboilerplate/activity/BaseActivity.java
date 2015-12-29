@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 
 /**
  */
-public class BaseActivity extends Activity{
+public class BaseActivity extends Activity {
     private ProgressDialog progressDialog;
 
     protected void showProgressDialog(int messageResource) {
@@ -21,7 +21,8 @@ public class BaseActivity extends Activity{
             progressDialog.setIndeterminate(true);
             progressDialog.setCancelable(false);
             progressDialog.show();
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 
     protected void hideProgressDialog() {
@@ -54,13 +55,15 @@ public class BaseActivity extends Activity{
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
     }
-    protected void hideKeyboard(){
-        try{
+
+    protected void hideKeyboard() {
+        try {
             View view = this.getCurrentFocus();
             if (view != null) {
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-        }catch (Exception e){}
+        } catch (Exception e) {
+        }
     }
 }
