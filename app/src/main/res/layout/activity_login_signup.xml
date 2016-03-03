@@ -1,8 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent" android:id="@+id/mainView"
+    android:layout_width="match_parent"
+    android:id="@+id/mainView"
     android:layout_height="match_parent"
-    android:orientation="vertical" android:visibility="visible"
+    android:orientation="vertical"
+    android:visibility="visible"
     tools:context=".MainActivity">
 
     <TextView
@@ -26,14 +28,18 @@
 
         <AutoCompleteTextView
             android:layout_margin="10dp"
-            android:id="@+id/email" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:hint="@string/prompt_email"
-            android:inputType="textEmailAddress" android:maxLines="1"
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_email"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
             android:singleLine="true" />
 
     </android.support.design.widget.TextInputLayout>
 
-    <android.support.design.widget.TextInputLayout android:layout_width="match_parent"
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
 
         android:layout_height="wrap_content">
 
@@ -45,17 +51,22 @@
             android:hint="@string/prompt_password"
             android:imeActionId="@+id/login"
             android:imeActionLabel="@string/action_sign_in_short"
-            android:imeOptions="actionUnspecified" android:inputType="textPassword"
-            android:maxLines="1" android:singleLine="true" />
+            android:imeOptions="actionUnspecified"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true" />
 
     </android.support.design.widget.TextInputLayout>
 
     <TableLayout
-        android:padding="10dp" android:layout_weight="1"
-        android:layout_width="match_parent" android:layout_marginTop="10dp"
+        android:padding="10dp"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
         android:layout_height="wrap_content">
 
         <TableRow android:layout_weight=".7">
+
             <Button
                 android:layout_weight="1"
                 android:id="@+id/email_login_button"
@@ -75,13 +86,16 @@
                 android:text="Sign Up"
                 android:layout_gravity="center_horizontal" />
         </TableRow>
-        <TableRow >
+
+        <TableRow>
+
             <TextView
                 android:layout_weight="1"
                 android:layout_gravity="center"
                 android:layout_margin="10dp"
                 android:gravity="center"
-                android:text="OR" android:textSize="17sp"
+                android:text="OR"
+                android:textSize="17sp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </TableRow>
@@ -112,19 +126,22 @@
 
         </TableRow>
 
-        <TableRow android:layout_weight="1" android:gravity="center">
+        <TableRow
+            android:layout_weight="1"
+            android:gravity="center">
 
             <Button
-android:padding="12dp"
+                android:padding="12dp"
                 android:layout_gravity="center"
-                 android:text="@string/resetPassword"
-                android:layout_width="wrap_content" android:gravity="center"
-                android:onClick="resetPassword" android:background="@null"
+                android:text="@string/resetPassword"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:onClick="resetPassword"
+                android:background="@null"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp" android:textColor="@color/com_facebook_blue"
-                android:layout_marginTop="5dp"
-                />
-
+                android:layout_marginBottom="5dp"
+                android:textColor="@color/com_facebook_blue"
+                android:layout_marginTop="5dp" />
 
 
         </TableRow>

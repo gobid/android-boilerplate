@@ -15,12 +15,12 @@ import java.security.MessageDigest;
 public class Utils {
 
 
-    public static  boolean isNetworkConnected(Context context) {
+    public static boolean isNetworkConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
     }
 
-    public static void printAPKKeyHash(Context context){
+    public static void printAPKKeyHash(Context context) {
         try {
             PackageInfo info = context.getPackageManager().getPackageInfo(
                     context.getPackageName(),
@@ -28,7 +28,7 @@ public class Utils {
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
-                Log.i(App.getTag(), Base64.encodeToString(md.digest(), Base64.DEFAULT)+"           "+md.digest());
+                Log.i(App.getTag(), Base64.encodeToString(md.digest(), Base64.DEFAULT) + "           " + md.digest());
             }
         } catch (Exception e) {
         }

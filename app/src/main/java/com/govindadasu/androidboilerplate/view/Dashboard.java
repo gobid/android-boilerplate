@@ -14,10 +14,11 @@ package com.govindadasu.androidboilerplate.view;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-        import android.content.Context;
-        import android.util.AttributeSet;
-        import android.view.View;
-        import android.view.ViewGroup;
+
+import android.content.Context;
+import android.util.AttributeSet;
+import android.view.View;
+import android.view.ViewGroup;
 
 /**
  * Custom layout that arranges children in a grid-like manner, optimizing for even horizontal and

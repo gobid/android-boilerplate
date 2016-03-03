@@ -2,20 +2,14 @@ package com.govindadasu.androidboilerplate.app;
 
 import android.app.Application;
 import android.content.ContextWrapper;
-import android.util.Log;
 
-import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.Profile;
 import com.facebook.ProfileTracker;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.govindadasu.androidboilerplate.util.Prefs;
 
-public class App extends Application{
+public class App extends Application {
     private LoginButton loginButton;
     protected static CallbackManager mCallbackManager;
     protected static ProfileTracker mProfileTracker;
