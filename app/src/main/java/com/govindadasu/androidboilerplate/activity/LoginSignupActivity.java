@@ -465,40 +465,43 @@ public class LoginSignupActivity extends PlusBaseActivity implements
 
             if (isLoginRequest) {
                 Ion.with(this)
-                        .load(Constants.SERVER_URL + Constants.NAMESPACE_EMAIL_SIGN_IN)
+                        .load("POST", Constants.SERVER_URL + Constants.NAMESPACE_EMAIL_SIGN_IN)
                         .setBodyParameter(Constants.KEY_CLIENT_ID, Constants.CLIENT_ID)
                         .setBodyParameter(Constants.KEY_CLIENT_SECRITE, Constants.CLIENT_SECRIT)
                         .setBodyParameter("username", email)
                         .setBodyParameter("password", password)
-                        .setBodyParameter("grant_type", "password").asJsonObject().setCallback(new FutureCallback<JsonObject>() {
+                        .setBodyParameter("grant_type", "password").asString().withResponse().setCallback(new FutureCallback<Response<String>>() {
                     @Override
-                    public void onCompleted(Exception e, JsonObject token) {
+                    public void onCompleted(Exception e, Response<String> result) {
                         hideProgressDialog();
                         if (e != null) {
                             e.printStackTrace();
                             showAlertDialog(R.string.title_alert, R.string.msg_unable_to_login_with_server);
                             return;
                         }
-                        if (token == null) {
+                        if (result == null) {
                             showAlertDialog(R.string.title_alert, R.string.msg_invalid_token_from_server);
                             return;
-                        } else if (!token.toString().contains("access_token")) {
+                        } else if (!result.getResult().contains("access_token")) {
                             showAlertDialog(R.string.title_alert, R.string.msg_invalid_username);
-                            resetForm();
                             return;
                         }
-                        resetForm();
-                        Prefs.putString("user_email", email);
-                        Prefs.putString(mContext.getString(R.string.key_user_access_token), token.toString());
-                        ServerAccessToken serverAccessToken = new Gson().fromJson(token, ServerAccessToken.class);
 
-                        User user = new User();
-                        user.setEmail(email);
-                        user.setAccessToken(serverAccessToken.getAccess_token());
-                        user.setLoginType(User.LOGIN_TYPE_EMAIL);
-                        User.setLoggedInUser(user);
-
-                        goToLandingPage();
+                        try {
+                            ServerAccessToken serverAccessToken = new Gson().fromJson(result.getResult(), ServerAccessToken.class);
+                            Prefs.putString("user_email", email);
+                            Prefs.putString(mContext.getString(R.string.key_user_access_token), result.getResult());
+                            User user = new User();
+                            user.setEmail(email);
+                            user.setAccessToken(serverAccessToken.getAccess_token());
+                            user.setLoginType(User.LOGIN_TYPE_EMAIL);
+                            User.setLoggedInUser(user);
+                            resetForm();
+                            goToLandingPage();
+                        } catch (Exception es) {
+                            showAlertDialog(R.string.title_alert, R.string.msg_invalid_username);
+                            es.printStackTrace();
+                        }
                     }
                 });
             } else {
@@ -702,7 +705,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                         if (response.getError() != null) {
                             Log.i(App.getTag(), "error");
                         } else {
-//                          // logged in
+                            hideProgressDialog();
+                            // logged in
                             User user = new User();
                             user.setFirst_name(me.optString("first_name"));
                             user.setLast_name(me.optString("last_name"));
@@ -714,7 +718,7 @@ public class LoginSignupActivity extends PlusBaseActivity implements
                             user.setProfilePictureUrl("https://graph.facebook.com/"
                                     + user.getUserId() + "/picture?type=large");
                             User.setLoggedInUser(user);
-
+                            hideProgressDialog();
                             onUserLoggedInWithSocialMedia();
 
                         }
@@ -726,6 +730,8 @@ public class LoginSignupActivity extends PlusBaseActivity implements
         request.setParameters(parameters);
         request.executeAsync();
     }
+
+
 
 
     private class RetrieveTokenTask extends AsyncTask<String, Void, String> {

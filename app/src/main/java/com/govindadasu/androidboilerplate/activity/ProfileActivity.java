@@ -131,7 +131,6 @@ public class ProfileActivity extends BaseActivity {
                         } else {
                             showAlertDialog(R.string.title_alert, R.string.msg_unable_to_get_user_data);
                         }
-
                     }
                 });
             }

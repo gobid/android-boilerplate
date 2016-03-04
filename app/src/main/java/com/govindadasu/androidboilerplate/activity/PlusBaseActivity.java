@@ -39,7 +39,7 @@ public abstract class PlusBaseActivity extends BaseActivity
 
 
     /**
-     * Called when the {@link PlusClient} revokes access to this app.
+     * Called when the {PlusClient} revokes access to this app.
      */
     protected abstract void onPlusClientRevokeAccess();
 
@@ -49,12 +49,12 @@ public abstract class PlusBaseActivity extends BaseActivity
     protected abstract void onPlusClientSignIn();
 
     /**
-     * Called when the {@link PlusClient} is disconnected.
+     * Called when the {PlusClient} is disconnected.
      */
     protected abstract void onPlusClientSignOut();
 
     /**
-     * Called when the {@link PlusClient} is blocking the UI.  If you have a progress bar widget,
+     * Called when the {PlusClient} is blocking the UI.  If you have a progress bar widget,
      * this tells you when to show or hide it.
      */
     protected abstract void onPlusClientBlockingUI(boolean show);
@@ -102,7 +102,7 @@ public abstract class PlusBaseActivity extends BaseActivity
     }
 
     /**
-     * Connect the {@link PlusClient} only if a connection isn't already in progress.  This will
+     * Connect the {PlusClient} only if a connection isn't already in progress.  This will
      * call back to {@link #onConnected(android.os.Bundle)} or
      * {@link #onConnectionFailed(com.google.android.gms.common.ConnectionResult)}.
      */
@@ -113,8 +113,8 @@ public abstract class PlusBaseActivity extends BaseActivity
     }
 
     /**
-     * Disconnect the {@link PlusClient} only if it is connected (otherwise, it can throw an error.)
-     * This will call back to {@link #onDisconnected()}.
+     * Disconnect the {PlusClient} only if it is connected (otherwise, it can throw an error.)
+     * This will call back to {onDisconnected()}.
      */
     private void initiatePlusClientDisconnect() {
         if (mPlusClient.isConnected()) {

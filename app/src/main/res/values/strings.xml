@@ -15,11 +15,10 @@
     <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+        completions."</string>
     <string name="title_activity_main2">Main2Activity</string>
-    <string name="old_url">https://forge.fwd.wf</string>
-    <string name="rest_api_url">http://apitodo.flipbitsolutions.com</string>
+    <string name="old_url">http://forge.fwd.wf</string>
+    <string name="rest_api_url">http://boilerplate-staging.elasticbeanstalk.com</string>
     <string name="signing_up">Signing in, Please wait...</string>
     <string name="msg_sigining_in">Signing in, Please wait...</string>
     <string name="msg_unable_to_login">Unable to sign in. Please try again later.</string>
@@ -57,6 +56,4 @@
     <string name="update">Update Profile</string>
     <string name="processing">Processing, Please wait...</string>
     <string name="username">User Name</string>
-
-
 </resources>

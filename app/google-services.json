@@ -1,1 +1,47 @@
-{"project_info":{"project_id":"androidboilerplate-183c6","project_number":"599947852235","name":"AndroidBoilerplate"},"client":[{"client_info":{"mobilesdk_app_id":"1:599947852235:android:5f8cf272264fe603","client_id":"android:com.govindadasu.androidboilerplate","client_type":1,"android_client_info":{"package_name":"com.govindadasu.androidboilerplate"}},"oauth_client":[{"client_id":"599947852235-834eujngd8s1c3tt89hra52s5itpdktn.apps.googleusercontent.com","client_type":1,"android_info":{"package_name":"com.govindadasu.androidboilerplate","certificate_hash":"2E81DEEAF7039152FCC7E28194F8DBC34A7C7271"}}],"api_key":[],"services":{"analytics_service":{"status":1},"cloud_messaging_service":{"status":1,"apns_config":[]},"appinvite_service":{"status":1,"other_platform_oauth_client":[]},"google_signin_service":{"status":2},"ads_service":{"status":1}}}],"client_info":[],"ARTIFACT_VERSION":"1"}
+{
+  "project_info": {
+    "project_id":"androidboilerplate-183c6",
+    "project_number":"599947852235",
+    "name":"AndroidBoilerplate"
+  },
+  "client":[{
+    "client_info":{
+      "mobilesdk_app_id":"1:599947852235:android:5f8cf272264fe603",
+      "client_id":"android:com.govindadasu.androidboilerplate",
+      "client_type":1,
+      "android_client_info":{
+        "package_name":"com.govindadasu.androidboilerplate"
+      }
+    },
+    "oauth_client":[{
+      "client_id":"919337801636-5qt6o1al7a2d6l4ee4nngd1tef2driaa.apps.googleusercontent.com",
+      "client_type":1,
+      "android_info":{
+        "package_name":"com.govindadasu.androidboilerplate",
+        "certificate_hash":"313F0989F28FC26D25F7E1AD717D4ADAFA5F6E19"
+      }
+    }],
+    "api_key":[],
+    "services":{
+      "analytics_service":{
+        "status":1
+      },
+      "cloud_messaging_service":{
+        "status":1,
+        "apns_config":[]
+      },
+      "appinvite_service":{
+        "status":1,
+        "other_platform_oauth_client":[]
+      },
+      "google_signin_service":{
+        "status":2
+      },
+      "ads_service":{
+        "status":1
+      }
+    }
+  }],
+  "client_info":[],
+  "ARTIFACT_VERSION":"1"
+}
