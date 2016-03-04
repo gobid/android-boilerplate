@@ -2,7 +2,7 @@ package com.govindadasu.androidboilerplate.constant;
 
 
 public class Constants {
-    public static final String NAMESPACE_TOKEN_EXCHANGE = "auth/convert-token";
+    public static final String NAMESPACE_TOKEN_EXCHANGE = "/auth/convert-token";
     public static final String BASE_SERVER_URL = "http://boilerplate-staging.elasticbeanstalk.com";
     public static final String SERVER_URL_USER_INFO_FROM_TOKEN = BASE_SERVER_URL + "/djoser-auth/me/";
     public static final String NAMESPACE_PASSWORD_RESET = "/djoser-auth/password/reset/";
@@ -18,7 +18,7 @@ public class Constants {
     public static final String KEY_AUTHENTICATION = "Authorization";
     public static final String METHOD_GET = "GET";
     public static final String GRANT_TYPE = "grant_type";
-    public static final String NAMESPACE_ME = "djoser-auth/me/";
+    public static final String NAMESPACE_ME = "/djoser-auth/me/";
     public static final String NAMESPACE_ME_INFO = "/api/users/#/";
 
 
